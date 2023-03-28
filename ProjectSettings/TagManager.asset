@@ -6,6 +6,8 @@ TagManager:
   tags:
   - Wall
   - Paddle
+  - EndOne
+  - EndTwo
   layers:
   - Default
   - TransparentFX

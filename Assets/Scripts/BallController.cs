@@ -15,7 +15,8 @@ public class BallController : MonoBehaviour {
     }
     
     void Update () {
-        
+        if(GameController.instance.inPlay == true)
+        {
             if(!setSpeed)
             {
                 setSpeed = true;
@@ -24,7 +25,7 @@ public class BallController : MonoBehaviour {
                 ySpeed = Random.Range(1f, 2f) * Random.Range(0, 2) * 2 - 1;
             }
             MoveBall();
-        
+        }
     }
 
     void MoveBall()
@@ -73,7 +74,7 @@ public class BallController : MonoBehaviour {
             GameController.instance.inPlay = false;
             setSpeed = false;
             myRb.velocity = Vector2.zero;
-            this.transform.position = Vector2.zero; 
+            this.transform.position = new Vector3(0,0,-1); 
         }
         else if(other.tag == "EndTwo")
         {
@@ -82,7 +83,7 @@ public class BallController : MonoBehaviour {
             GameController.instance.inPlay = false;
             setSpeed = false;
             myRb.velocity = Vector2.zero;
-            this.transform.position = Vector2.zero; 
+            this.transform.position = new Vector3(0,0,-1); 
         }
     }
 }

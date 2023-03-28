@@ -26,6 +26,17 @@ public class GameController : MonoBehaviour {
 
     // Update is called once per frame
     void Update () {
+        if(inPlay == false && gameOver != true)
+        {
+            if(Input.GetKeyDown(KeyCode.Space))
+            {
+                inPlay = true;
+            }
+        }
+        if(Input.GetKeyDown(KeyCode.Escape))
+        {
+            SceneManager.LoadScene(0);
+        }
         Winner();
     }
 
@@ -46,5 +57,10 @@ public class GameController : MonoBehaviour {
                 gameOverPanel.SetActive(true);
             }
         }
+    }
+
+    public void MainMenu()
+    {
+        SceneManager.LoadScene(0);
     }
 }
