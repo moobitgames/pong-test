@@ -1,18 +1,27 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PaddleController : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        // Comment here
-    }
+    public string leftKey, rightKey;
+    public float speed;
+
+    // Use this for initialization
 
     // Update is called once per frame
     void Update()
     {
-        
+        PaddleMovement();
+    }
+
+    void PaddleMovement()
+    {
+        if (Input.GetKey(leftKey) && transform.position.x > -2.24)
+        {
+            transform.Translate(Vector3.left * Time.deltaTime * speed, Space.World);
+        }
+        if (Input.GetKey(rightKey) && transform.position.x < 2.24)
+        {
+            transform.Translate(Vector3.right * Time.deltaTime * speed, Space.World);
+        }
     }
 }
