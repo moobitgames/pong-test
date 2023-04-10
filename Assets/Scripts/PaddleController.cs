@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 using Photon.Pun;
 
 public class PaddleController : MonoBehaviour
@@ -25,12 +27,32 @@ public class PaddleController : MonoBehaviour
 
     void PaddleMovement()
     {
+        if (PhotonNetwork.IsMasterClient)
+        {
 
-        if (Input.GetKey(leftKey) && transform.position.x > -2.24)
+            if (Input.GetKey(leftKey) && transform.position.x > -2.24)
+            {
+                transform.Translate(Vector3.left * Time.deltaTime * speed, Space.Self);
+            }
+            if (Input.GetKey(rightKey) && transform.position.x < 2.24)
+            {
+                transform.Translate(Vector3.right * Time.deltaTime * speed, Space.Self);
+            }
+        }
+        else
+        {
+            ClientPaddleMovement();
+        }
+    }
+
+    void ClientPaddleMovement() 
+    {
+        Debug.Log("Theirs");
+        if (Input.GetKey(leftKey)) 
         {
             transform.Translate(Vector3.left * Time.deltaTime * speed, Space.Self);
         }
-        if (Input.GetKey(rightKey) && transform.position.x < 2.24)
+        if (Input.GetKey(rightKey))
         {
             transform.Translate(Vector3.right * Time.deltaTime * speed, Space.Self);
         }
