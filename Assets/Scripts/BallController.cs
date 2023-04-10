@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Photon.Pun;
 
 public class BallController : MonoBehaviour {
 
@@ -15,6 +16,9 @@ public class BallController : MonoBehaviour {
     }
     
     void Update () {
+        if(!PhotonNetwork.IsMasterClient){
+            return;
+        }
         if(GameController.instance.inPlay == true)
         {
             if(!setSpeed)
