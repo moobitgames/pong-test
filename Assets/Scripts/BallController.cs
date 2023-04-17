@@ -74,7 +74,11 @@ public class BallController : MonoBehaviour {
         if(other.tag == "EndOne")
         {
             GameController.instance.scoreOne++;
-            GameController.instance.textOne.text = GameController.instance.scoreOne.ToString();
+            if(PhotonNetwork.IsMasterClient){
+                GameController.instance.textOne.text = GameController.instance.scoreOne.ToString();
+            }else{
+                GameController.instance.textOne.text = GameController.instance.scoreTwo.ToString();
+            }
             GameController.instance.inPlay = false;
             setSpeed = false;
             myRb.velocity = Vector2.zero;
@@ -83,7 +87,11 @@ public class BallController : MonoBehaviour {
         else if(other.tag == "EndTwo")
         {
             GameController.instance.scoreTwo++;
-            GameController.instance.textTwo.text = GameController.instance.scoreTwo.ToString();
+            if(PhotonNetwork.IsMasterClient){
+                GameController.instance.textOne.text = GameController.instance.scoreTwo.ToString();
+            }else{
+                GameController.instance.textOne.text = GameController.instance.scoreOne.ToString();
+            }            
             GameController.instance.inPlay = false;
             setSpeed = false;
             myRb.velocity = Vector2.zero;

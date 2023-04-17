@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using Photon.Pun;
 
 public class GameController : MonoBehaviour {
 
@@ -19,6 +20,17 @@ public class GameController : MonoBehaviour {
     [SerializeField] GameObject gameOverPanel;
     [SerializeField] Text winnerText;
 
+    [SerializeField] Text myName;
+    [SerializeField] Text theirName;
+
+    private void Start(){
+        myName.text=PhotonNetwork.NickName;
+    }
+
+    public void SetTheirName(string nameIn){
+        theirName.text=nameIn;
+    }
+
     private void OnEnable()
     {
         instance = this;
@@ -35,6 +47,7 @@ public class GameController : MonoBehaviour {
         }
         if(Input.GetKeyDown(KeyCode.Escape))
         {
+            PhotonNetwork.LeaveRoom();
             SceneManager.LoadScene(0);
         }
         Winner();
@@ -61,6 +74,7 @@ public class GameController : MonoBehaviour {
 
     public void MainMenu()
     {
+        PhotonNetwork.LeaveRoom();
         SceneManager.LoadScene(0);
     }
 }

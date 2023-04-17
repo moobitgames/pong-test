@@ -677,6 +677,8 @@ MonoBehaviour:
   textTwo: {fileID: 1573443006}
   gameOverPanel: {fileID: 1537465960}
   winnerText: {fileID: 1231489473}
+  myName: {fileID: 1925593746}
+  theirName: {fileID: 1740469915}
 --- !u!4 &954125500
 Transform:
   m_ObjectHideFlags: 0
@@ -1607,6 +1609,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -1111239925663478164, guid: 8f546fb0289b69e47a93673677e40fc6,
+        type: 3}
+      propertyPath: sceneViewId
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 1126706658256602723, guid: 8f546fb0289b69e47a93673677e40fc6,
         type: 3}
       propertyPath: m_Constraints

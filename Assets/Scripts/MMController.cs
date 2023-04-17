@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
+using Photon.Pun;
 
 public class MMController : MonoBehaviour
 {
@@ -12,8 +13,12 @@ public class MMController : MonoBehaviour
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Escape))
-        {
+        {   
             Application.Quit();
         }
     }
+
+    public void UsernameInput(string username){
+        PhotonNetwork.NickName=username;
+    } 
 }

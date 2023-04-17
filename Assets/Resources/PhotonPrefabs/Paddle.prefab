@@ -119,7 +119,7 @@ GameObject:
   - component: {fileID: 8981370147966417407}
   - component: {fileID: 693609252791037290}
   - component: {fileID: 970571211600058100}
-  - component: {fileID: 29608573677325683}
+  - component: {fileID: -3081503708047658724}
   m_Layer: 0
   m_Name: Paddle
   m_TagString: Paddle
@@ -169,17 +169,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ObservedComponentsFoldoutOpen: 1
+  ObservedComponentsFoldoutOpen: 0
   Group: 0
   prefixField: -1
   Synchronization: 3
   OwnershipTransfer: 0
   observableSearch: 2
-  ObservedComponents: []
+  ObservedComponents:
+  - {fileID: -3081503708047658724}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
---- !u!114 &29608573677325683
+--- !u!114 &-3081503708047658724
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -192,6 +193,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_SynchronizePosition: 1
-  m_SynchronizeRotation: 1
+  m_SynchronizeRotation: 0
   m_SynchronizeScale: 0
   m_UseLocal: 1
