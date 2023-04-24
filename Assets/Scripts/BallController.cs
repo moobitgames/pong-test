@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using Photon.Pun;
+using Hashtable = ExitGames.Client.Photon.Hashtable;    
 
 public class BallController : MonoBehaviour {
 
@@ -73,11 +74,14 @@ public class BallController : MonoBehaviour {
     {
         if(other.tag == "EndOne")
         {
-            GameController.instance.scoreOne++;
-            if(PhotonNetwork.IsMasterClient){
-                GameController.instance.textOne.text = GameController.instance.scoreOne.ToString();
-            }else{
-                GameController.instance.textOne.text = GameController.instance.scoreTwo.ToString();
+            // GameController.instance.scoreOne++;
+            if( PhotonNetwork.IsMasterClient)
+            {
+                int score = (int)PhotonNetwork.LocalPlayer.CustomProperties["Score"];
+                score++;
+                Hashtable hash=new Hashtable();
+                hash.Add("Score",score);
+                PhotonNetwork.SetPlayerCustomProperties(hash);
             }
             GameController.instance.inPlay = false;
             setSpeed = false;
@@ -86,12 +90,15 @@ public class BallController : MonoBehaviour {
         }
         else if(other.tag == "EndTwo")
         {
-            GameController.instance.scoreTwo++;
-            if(PhotonNetwork.IsMasterClient){
-                GameController.instance.textOne.text = GameController.instance.scoreTwo.ToString();
-            }else{
-                GameController.instance.textOne.text = GameController.instance.scoreOne.ToString();
-            }            
+            //GameController.instance.scoreTwo++;
+            if(!PhotonNetwork.IsMasterClient)
+            {
+                int score = (int)PhotonNetwork.LocalPlayer.CustomProperties["Score"];
+                score++;
+                Hashtable hash=new Hashtable();
+                hash.Add("Score",score);
+                PhotonNetwork.SetPlayerCustomProperties(hash);
+            }
             GameController.instance.inPlay = false;
             setSpeed = false;
             myRb.velocity = Vector2.zero;

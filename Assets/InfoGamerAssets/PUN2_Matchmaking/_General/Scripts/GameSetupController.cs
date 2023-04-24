@@ -1,6 +1,7 @@
 ﻿using Photon.Pun;
 using System.IO;
 using UnityEngine;
+using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 public class GameSetupController : MonoBehaviour
 {
@@ -18,5 +19,8 @@ public class GameSetupController : MonoBehaviour
         }else{
             PhotonNetwork.Instantiate(Path.Combine("PhotonPrefabs", "Paddle"), Vector3.zero, Quaternion.Euler(new Vector3(0,0,180)));
         }
+        Hashtable hash=new Hashtable();
+        hash.Add("Score",0);
+        PhotonNetwork.LocalPlayer.SetCustomProperties(hash);
     }
 }

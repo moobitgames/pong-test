@@ -2,8 +2,9 @@
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using Photon.Pun;
+using Photon.Realtime;
 
-public class GameController : MonoBehaviour {
+public class GameController : MonoBehaviourPunCallbacks {
 
     public static GameController instance;
 
@@ -16,6 +17,8 @@ public class GameController : MonoBehaviour {
 
     public Text textOne;
     public Text textTwo;
+
+    private Player other;
 
     [SerializeField] GameObject gameOverPanel;
     [SerializeField] Text winnerText;
@@ -31,13 +34,33 @@ public class GameController : MonoBehaviour {
         theirName.text=nameIn;
     }
 
-    private void OnEnable()
+    public override void OnEnable()
     {
         instance = this;
+        base.OnEnable();
+    }
+
+    public override void OnPlayerEnteredRoom(Player newPlayer){
+        other=newPlayer;
+        Debug.Log(other);
+    }
+
+    public override void OnJoinedRoom(){
+        if(PhotonNetwork.PlayerListOthers.Length>0){
+            other=PhotonNetwork.PlayerListOthers[0];
+        }
+
     }
 
     // Update is called once per frame
     void Update () {
+        if(other!=null && other.CustomProperties!=null){
+            scoreOne=(int) PhotonNetwork.LocalPlayer.CustomProperties["Score"];
+            scoreTwo=(int) other.CustomProperties["Score"];
+            GameController.instance.textOne.text = scoreOne.ToString();
+            GameController.instance.textTwo.text = scoreTwo.ToString();
+        }
+
         if(inPlay == false && gameOver != true)
         {
             if(Input.GetKeyDown(KeyCode.Space))
