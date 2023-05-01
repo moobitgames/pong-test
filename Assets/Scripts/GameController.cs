@@ -3,12 +3,15 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using Photon.Pun;
 using Photon.Realtime;
+using Hashtable = ExitGames.Client.Photon.Hashtable;    
+
 
 public class GameController : MonoBehaviourPunCallbacks {
 
     public static GameController instance;
 
     public bool inPlay = false;
+    public bool isTurn = false;
     bool gameOver = false;
 
     public int scoreOne;
@@ -18,7 +21,7 @@ public class GameController : MonoBehaviourPunCallbacks {
     public Text textOne;
     public Text textTwo;
 
-    private Player other;
+    private static Player other;
 
     [SerializeField] GameObject gameOverPanel;
     [SerializeField] Text winnerText;
@@ -28,6 +31,9 @@ public class GameController : MonoBehaviourPunCallbacks {
 
     private void Start(){
         myName.text=PhotonNetwork.NickName;
+        if(PhotonNetwork.IsMasterClient){
+            isTurn=true;
+        }
     }
 
     public void SetTheirName(string nameIn){
@@ -42,7 +48,6 @@ public class GameController : MonoBehaviourPunCallbacks {
 
     public override void OnPlayerEnteredRoom(Player newPlayer){
         other=newPlayer;
-        Debug.Log(other);
     }
 
     public override void OnJoinedRoom(){
@@ -52,20 +57,44 @@ public class GameController : MonoBehaviourPunCallbacks {
 
     }
 
+    public override void OnPlayerLeftRoom(Player otherPlayer){
+        Hashtable hash=new Hashtable();
+        hash.Add("Rot",(int)other.CustomProperties["Rot"]);
+        hash.Add("Score",0);
+        other.SetCustomProperties(hash);
+
+    }
+
+    public static void OtherPlayerScored(){
+        Hashtable hash=new Hashtable();
+        hash.Add("Rot",(int)other.CustomProperties["Rot"]);
+        hash.Add("Score",((int)other.CustomProperties["Score"])+1);
+        other.SetCustomProperties(hash);
+    }
+
+    [PunRPC]
+    private void RPC_setInPlay(bool value){
+        instance.inPlay=value;
+    }
+
     // Update is called once per frame
     void Update () {
+        scoreOne=(int) PhotonNetwork.LocalPlayer.CustomProperties["Score"];
+        GameController.instance.textOne.text = scoreOne.ToString();
+
         if(other!=null && other.CustomProperties!=null){
-            scoreOne=(int) PhotonNetwork.LocalPlayer.CustomProperties["Score"];
             scoreTwo=(int) other.CustomProperties["Score"];
-            GameController.instance.textOne.text = scoreOne.ToString();
             GameController.instance.textTwo.text = scoreTwo.ToString();
         }
 
-        if(inPlay == false && gameOver != true)
+        if(GameController.instance.inPlay == false && gameOver != true && GameController.instance.isTurn)
         {
             if(Input.GetKeyDown(KeyCode.Space))
             {
                 inPlay = true;
+                if(!PhotonNetwork.IsMasterClient){
+                    this.photonView.RPC("RPC_setInPlay",PhotonNetwork.MasterClient,true);
+                }
             }
         }
         if(Input.GetKeyDown(KeyCode.Escape))
@@ -83,13 +112,13 @@ public class GameController : MonoBehaviourPunCallbacks {
             if(scoreOne >= scoreToWin)
             {
                 gameOver = true;
-                winnerText.text = "Player 1 Wins";
+                winnerText.text = instance.myName.text + " Wins";
                 gameOverPanel.SetActive(true);
             }
             if(scoreTwo >= scoreToWin)
             {
                 gameOver = true;
-                winnerText.text = "Player 2 Wins";
+                winnerText.text = instance.theirName.text + " Wins";
                 gameOverPanel.SetActive(true);
             }
         }

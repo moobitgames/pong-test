@@ -14,12 +14,19 @@ public class GameSetupController : MonoBehaviour
     private void CreatePlayer()
     {
         Debug.Log("Creating Player");
+        Hashtable hash=new Hashtable();
         if(PhotonNetwork.IsMasterClient){
             PhotonNetwork.Instantiate(Path.Combine("PhotonPrefabs", "Paddle"), Vector3.zero, Quaternion.identity);
+            hash.Add("Rot",0);
         }else{
-            PhotonNetwork.Instantiate(Path.Combine("PhotonPrefabs", "Paddle"), Vector3.zero, Quaternion.Euler(new Vector3(0,0,180)));
+            if((int) PhotonNetwork.MasterClient.CustomProperties["Rot"]==0){
+                PhotonNetwork.Instantiate(Path.Combine("PhotonPrefabs", "Paddle"), Vector3.zero, Quaternion.Euler(new Vector3(0,0,180)));
+                hash.Add("Rot",180);
+            }else{
+                PhotonNetwork.Instantiate(Path.Combine("PhotonPrefabs", "Paddle"), Vector3.zero, Quaternion.identity);
+                hash.Add("Rot",0);
+            }
         }
-        Hashtable hash=new Hashtable();
         hash.Add("Score",0);
         PhotonNetwork.LocalPlayer.SetCustomProperties(hash);
     }

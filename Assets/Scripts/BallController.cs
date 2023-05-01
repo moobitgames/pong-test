@@ -25,9 +25,13 @@ public class BallController : MonoBehaviour {
             if(!setSpeed)
             {
                 setSpeed = true;
-                
-                xSpeed = Random.Range(1f, 2f) * Random.Range(0, 2) * 2 - 1;
-                ySpeed = Random.Range(1f, 2f) * Random.Range(0, 2) * 2 - 1;
+                int rot=(int)PhotonNetwork.LocalPlayer.CustomProperties["Rot"];
+                xSpeed = Random.Range(1f, 2f) * Random.Range(-1.0f,1.0f);
+                if(GameController.instance.isTurn==(rot==0)){
+                    ySpeed = Random.Range(1f, 2f) * Random.Range(-1.0f, 0);
+                }else{
+                    ySpeed = Random.Range(1f, 2f) * Random.Range(0, 1.0f);
+                }
             }
             MoveBall();
         }
@@ -72,37 +76,35 @@ public class BallController : MonoBehaviour {
     
     void OnTriggerEnter2D(Collider2D other)
     {
-        if(other.tag == "EndOne")
+        if((other.tag!="EndOne" && other.tag!="EndTwo")){return;}
+
+
+
+        int rot=(int)PhotonNetwork.LocalPlayer.CustomProperties["Rot"];
+        Hashtable hash=new Hashtable();
+        hash.Add("Rot",rot);
+        if((other.tag == "EndOne")==(rot==0))
         {
-            // GameController.instance.scoreOne++;
-            if( PhotonNetwork.IsMasterClient)
-            {
+            if(PhotonNetwork.IsMasterClient){
                 int score = (int)PhotonNetwork.LocalPlayer.CustomProperties["Score"];
                 score++;
-                Hashtable hash=new Hashtable();
                 hash.Add("Score",score);
                 PhotonNetwork.SetPlayerCustomProperties(hash);
             }
-            GameController.instance.inPlay = false;
-            setSpeed = false;
-            myRb.velocity = Vector2.zero;
-            this.transform.position = new Vector3(0,0,-1); 
+            GameController.instance.isTurn=false;
         }
-        else if(other.tag == "EndTwo")
+        else
         {
             //GameController.instance.scoreTwo++;
-            if(!PhotonNetwork.IsMasterClient)
-            {
-                int score = (int)PhotonNetwork.LocalPlayer.CustomProperties["Score"];
-                score++;
-                Hashtable hash=new Hashtable();
-                hash.Add("Score",score);
-                PhotonNetwork.SetPlayerCustomProperties(hash);
+            if(PhotonNetwork.IsMasterClient){
+                GameController.OtherPlayerScored();
             }
-            GameController.instance.inPlay = false;
-            setSpeed = false;
-            myRb.velocity = Vector2.zero;
-            this.transform.position = new Vector3(0,0,-1); 
+            GameController.instance.isTurn=true;
+
         }
+        GameController.instance.inPlay = false;
+        setSpeed = false;
+        myRb.velocity = Vector2.zero;
+        this.transform.position = new Vector3(0,0,-1); 
     }
 }
