@@ -57,12 +57,23 @@ public class GameController : MonoBehaviourPunCallbacks {
 
     }
 
-    public override void OnPlayerLeftRoom(Player otherPlayer){
+    void gameReset(){
+        scoreOne=0;
+        scoreTwo=0;
+        if(PhotonNetwork.IsMasterClient){
+            isTurn=true;
+        }
         Hashtable hash=new Hashtable();
-        hash.Add("Rot",(int)other.CustomProperties["Rot"]);
+        hash.Add("Rot",(int)PhotonNetwork.LocalPlayer.CustomProperties["Rot"]);
         hash.Add("Score",0);
-        other.SetCustomProperties(hash);
+        PhotonNetwork.LocalPlayer.SetCustomProperties(hash);
+        gameOver=false;
+        gameOverPanel.SetActive(false);
 
+    }
+
+    public override void OnPlayerLeftRoom(Player otherPlayer){
+        gameReset();
     }
 
     public static void OtherPlayerScored(){
@@ -127,6 +138,7 @@ public class GameController : MonoBehaviourPunCallbacks {
     public void MainMenu()
     {
         PhotonNetwork.LeaveRoom();
+        gameReset();
         SceneManager.LoadScene(0);
     }
 }
