@@ -8,6 +8,7 @@ public class BallController : MonoBehaviour {
     Rigidbody2D myRb;
     bool setSpeed;
     [SerializeField] float speedUp;
+    [SerializeField] float scale=1;
     float xSpeed;
     float ySpeed;
 
@@ -26,11 +27,11 @@ public class BallController : MonoBehaviour {
             {
                 setSpeed = true;
                 int rot=(int)PhotonNetwork.LocalPlayer.CustomProperties["Rot"];
-                xSpeed = Random.Range(1f, 2f) * Random.Range(-1.0f,1.0f);
+                xSpeed = Random.Range(1f, 2f) * Random.Range(-1.0f,1.0f)*scale;
                 if(GameController.instance.isTurn==(rot==0)){
-                    ySpeed = Random.Range(1f, 2f) * Random.Range(-1.0f, 0);
+                    ySpeed=-scale;
                 }else{
-                    ySpeed = Random.Range(1f, 2f) * Random.Range(0, 1.0f);
+                    ySpeed=scale;
                 }
             }
             MoveBall();
@@ -102,6 +103,8 @@ public class BallController : MonoBehaviour {
             GameController.instance.isTurn=true;
 
         }
+
+
         GameController.instance.inPlay = false;
         setSpeed = false;
         myRb.velocity = Vector2.zero;
