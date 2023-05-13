@@ -4,6 +4,9 @@ using Photon.Pun;
 
 public class MMController : MonoBehaviour
 {
+    [SerializeField]
+    private QuickStartLobbyController lobbyController; 
+
     public void Play()
     {
         SceneManager.LoadScene(1);
@@ -20,5 +23,10 @@ public class MMController : MonoBehaviour
 
     public void UsernameInput(string username){
         PhotonNetwork.NickName=username;
-    } 
+    }
+
+    public void RoomNumberInput(string roomNumber){
+        Debug.Log("Room number is: " + roomNumber);
+        lobbyController.UpdateRoomNumber(roomNumber);
+    }
 }

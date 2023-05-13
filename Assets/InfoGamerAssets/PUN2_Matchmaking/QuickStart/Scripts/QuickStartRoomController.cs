@@ -18,7 +18,7 @@ public class QuickStartRoomController : MonoBehaviourPunCallbacks
 
     public override void OnJoinedRoom() //Callback function for when we successfully create or join a room.
     {
-        Debug.Log("Joined Room");
+        Debug.Log("Joined Room: " + PhotonNetwork.CurrentRoom.Name);
         StartGame();
     }
 

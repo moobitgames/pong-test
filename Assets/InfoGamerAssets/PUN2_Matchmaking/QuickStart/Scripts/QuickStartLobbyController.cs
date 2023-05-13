@@ -12,6 +12,7 @@ public class QuickStartLobbyController : MonoBehaviourPunCallbacks
     private GameObject quickCancelButton; //button used to stop searing for a game to join.
     [SerializeField]
     private int roomSize; //Manual set the number of player in the room at one time.
+    private string roomNumber = "a";
 
     public override void OnConnectedToMaster() //Callback function for when the first connection is established successfully.
     {
@@ -22,10 +23,12 @@ public class QuickStartLobbyController : MonoBehaviourPunCallbacks
 
     public void QuickStart() //Paired to the Quick Start button
     {
-        Debug.Log("Starting");
+        Debug.Log("Starting with room number: " + roomNumber);
         quickStartButton.SetActive(false);
         quickCancelButton.SetActive(true);
+        RoomOptions roomOps = new RoomOptions() { IsVisible = true, IsOpen = true, MaxPlayers = (byte)roomSize };
         PhotonNetwork.JoinRandomRoom(); //First tries to join an existing room
+        // PhotonNetwork.JoinOrCreateRoom(roomNumber, roomOps); //First tries to join an existing room
         Debug.Log("Quick start");
     }
 
@@ -40,8 +43,7 @@ public class QuickStartLobbyController : MonoBehaviourPunCallbacks
         Debug.Log("Creating room now");
         int randomRoomNumber = Random.Range(0, 10000); //creating a random name for the room
         RoomOptions roomOps = new RoomOptions() { IsVisible = true, IsOpen = true, MaxPlayers = (byte)roomSize };
-        PhotonNetwork.CreateRoom("Room" + randomRoomNumber, roomOps); //attempting to create a new room
-        Debug.Log(randomRoomNumber);
+        PhotonNetwork.CreateRoom(this.roomNumber, roomOps); //attempting to create a new room
     }
 
     public override void OnCreateRoomFailed(short returnCode, string message) //callback function for if we fail to create a room. Most likely fail because room name was taken.
@@ -55,5 +57,10 @@ public class QuickStartLobbyController : MonoBehaviourPunCallbacks
         quickCancelButton.SetActive(false);
         quickStartButton.SetActive(true);
         PhotonNetwork.LeaveRoom();
+    }
+
+    public void UpdateRoomNumber(string num)
+    {
+        this.roomNumber = num;
     }
 }
