@@ -103,6 +103,8 @@ public class BallController : MonoBehaviour {
             GameController.instance.isTurn=true;
 
         }
+
+
         GameController.instance.inPlay = false;
         setSpeed = false;
         myRb.velocity = Vector2.zero;

@@ -34,6 +34,7 @@ public class GameController : MonoBehaviourPunCallbacks {
         if(PhotonNetwork.IsMasterClient){
             isTurn=true;
         }
+        gameOverPanel.SetActive(false);
     }
 
     public void SetTheirName(string nameIn){
@@ -67,13 +68,17 @@ public class GameController : MonoBehaviourPunCallbacks {
         hash.Add("Rot",(int)PhotonNetwork.LocalPlayer.CustomProperties["Rot"]);
         hash.Add("Score",0);
         PhotonNetwork.LocalPlayer.SetCustomProperties(hash);
+        other=null;
         gameOver=false;
         gameOverPanel.SetActive(false);
+        Debug.Log("Reseting Game");
 
     }
 
     public override void OnPlayerLeftRoom(Player otherPlayer){
-        gameReset();
+        if(!gameOver){
+            gameReset();
+        }
     }
 
     public static void OtherPlayerScored(){
@@ -137,8 +142,8 @@ public class GameController : MonoBehaviourPunCallbacks {
 
     public void MainMenu()
     {
-        PhotonNetwork.LeaveRoom();
         gameReset();
+        PhotonNetwork.LeaveRoom();
         SceneManager.LoadScene(0);
     }
 }

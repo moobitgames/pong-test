@@ -1718,7 +1718,8 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: -1111239925663478164, guid: 8f546fb0289b69e47a93673677e40fc6, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 8f546fb0289b69e47a93673677e40fc6, type: 3}
 --- !u!1 &1560358287270796794 stripped
 GameObject:
@@ -1740,8 +1741,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_SynchronizeVelocity: 1
   m_SynchronizeAngularVelocity: 0
-  m_TeleportEnabled: 0
-  m_TeleportIfDistanceGreaterThan: 3
+  m_TeleportEnabled: 1
+  m_TeleportIfDistanceGreaterThan: 1
 --- !u!114 &1560358287270796796
 MonoBehaviour:
   m_ObjectHideFlags: 0
