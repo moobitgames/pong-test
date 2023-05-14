@@ -27,8 +27,9 @@ public class QuickStartLobbyController : MonoBehaviourPunCallbacks
         quickStartButton.SetActive(false);
         quickCancelButton.SetActive(true);
         RoomOptions roomOps = new RoomOptions() { IsVisible = true, IsOpen = true, MaxPlayers = (byte)roomSize };
-        PhotonNetwork.JoinRandomRoom(); //First tries to join an existing room
-        // PhotonNetwork.JoinOrCreateRoom(roomNumber, roomOps); //First tries to join an existing room
+        TypedLobby type  = new TypedLobby("lobby", LobbyType.Default);
+        // PhotonNetwork.JoinRandomRoom(); //First tries to join an existieng room
+        PhotonNetwork.JoinOrCreateRoom(this.roomNumber, roomOps, type); //First tries to join an existing room
         Debug.Log("Quick start");
     }
 
