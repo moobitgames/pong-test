@@ -10,6 +10,14 @@ public class QuickStartLobbyController : MonoBehaviourPunCallbacks
     private GameObject quickStartButton; //button used for creating and joining a game.
     [SerializeField]
     private GameObject quickCancelButton; //button used to stop searing for a game to join.
+
+    [SerializeField]
+    private GameObject quickLoadingButtonHost; //Displays loading while connecting to Photon servers.
+    [SerializeField]
+    private GameObject quickStartButtonHost; //button used for creating and joining a game.
+    [SerializeField]
+    private GameObject quickCancelButtonHost; //button used to stop searing for a game to join.
+    
     [SerializeField]
     private int roomSize; //Manual set the number of player in the room at one time.
     private string roomNumber = "a";
@@ -19,6 +27,8 @@ public class QuickStartLobbyController : MonoBehaviourPunCallbacks
         PhotonNetwork.AutomaticallySyncScene = true; //Makes it so whatever scene the master client has loaded is the scene all other clients will load
         quickStartButton.SetActive(true);
         quickLoadingButton.SetActive(false);
+        quickStartButtonHost.SetActive(true);
+        quickLoadingButtonHost.SetActive(false);
     }
 
     public void QuickStart() //Paired to the Quick Start button
@@ -26,6 +36,8 @@ public class QuickStartLobbyController : MonoBehaviourPunCallbacks
         Debug.Log("Starting with room number: " + roomNumber);
         quickStartButton.SetActive(false);
         quickCancelButton.SetActive(true);
+        quickStartButtonHost.SetActive(false);
+        quickCancelButtonHost.SetActive(true);
         RoomOptions roomOps = new RoomOptions() { IsVisible = true, IsOpen = true, MaxPlayers = (byte)roomSize };
         TypedLobby type  = new TypedLobby("lobby", LobbyType.Default);
         // PhotonNetwork.JoinRandomRoom(); //First tries to join an existieng room
@@ -57,6 +69,8 @@ public class QuickStartLobbyController : MonoBehaviourPunCallbacks
     {
         quickCancelButton.SetActive(false);
         quickStartButton.SetActive(true);
+        quickCancelButtonHost.SetActive(false);
+        quickStartButtonHost.SetActive(true);
         PhotonNetwork.LeaveRoom();
     }
 
