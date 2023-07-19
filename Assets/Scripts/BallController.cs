@@ -11,11 +11,29 @@ public class BallController : MonoBehaviour {
     [SerializeField] float scale=1;
     float xSpeed;
     float ySpeed;
+    Vector2 networkPosition;
 
     void Start()
     {
         myRb = GetComponent<Rigidbody2D>();
     }
+    
+    public void OnPhotonSerializeView (PhotonStream stream, PhotonMessageInfo info){
+        if (stream.IsWriting)
+        {
+        stream.SendNext(myRb.position);
+        stream.SendNext(myRb.velocity);
+        }
+        else
+        {
+            networkPosition = (Vector2) stream.ReceiveNext();
+            myRb.velocity = (Vector2) stream.ReceiveNext();
+            float lag = Mathf.Abs((float) (PhotonNetwork.Time - info.SentServerTime));
+            networkPosition += (myRb.velocity * lag);
+        }
+
+    }
+
     
     void Update () {
         if(!PhotonNetwork.IsMasterClient){
