@@ -3,7 +3,7 @@ using System.Collections;
 using Photon.Pun;
 using Hashtable = ExitGames.Client.Photon.Hashtable;    
 
-public class BallController : MonoBehaviour {
+public class BallController : MonoBehaviourPunCallbacks {
 
     Rigidbody2D myRb;
     bool setSpeed;
@@ -43,17 +43,9 @@ public class BallController : MonoBehaviour {
         myRb.velocity = new Vector2(xSpeed, ySpeed);
     }
 
-    void OnCollisionEnter2D(Collision2D other)
-    {
-        
-        if(other.transform.tag =="Wall")
-        {
-            xSpeed = xSpeed*-1;
-        }
-        
-        if (other.transform.tag == "Paddle" )
-        {
-            ySpeed = ySpeed * -1;
+    [PunRPC]
+    private void RPC_bounce(){
+         ySpeed = ySpeed * -1;
 
             if(ySpeed > 0)
             {
@@ -71,6 +63,22 @@ public class BallController : MonoBehaviour {
             {
                 xSpeed -= speedUp;
             }
+    }
+
+    void OnCollisionEnter2D(Collision2D other)
+    {
+        
+        if(other.transform.tag =="Wall" && PhotonNetwork.IsMasterClient)
+        {
+            xSpeed = xSpeed*-1;
+        }
+        
+        if (other.transform.tag == "Paddle" && PhotonNetwork.IsMasterClient)
+        {
+            RPC_bounce();
+        }
+        if(other.transform.tag=="Paddle2" && !PhotonNetwork.IsMasterClient){
+            this.photonView.RPC("RPC_bounce",PhotonNetwork.MasterClient,true);
         }
 
     }
