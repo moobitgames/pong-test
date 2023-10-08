@@ -4,8 +4,13 @@ using Photon.Pun;
 
 public class MMController : MonoBehaviour
 {
+    // Controllers
     [SerializeField]
-    private QuickStartLobbyController lobbyController; 
+    private QuickStartLobbyController lobbyController;
+    [SerializeField]
+    private SettingsController settingsController;
+
+    // Screen components
     [SerializeField]
     private GameObject introScreen; // Intro Title screen on boot
     [SerializeField]
@@ -16,6 +21,12 @@ public class MMController : MonoBehaviour
     private GameObject joinGameScreen; // Screen for desktop client to join hosted game
     [SerializeField]
     private GameObject singleSetupScreen; // Screen for desktop client to setup single player game
+
+    // UI elements
+    // [SerializeField]
+    // private GameObject showIntroScreen;
+    
+    // State variables
     private bool showIntroScreen = true;
     private int numPlayers;
 
@@ -37,13 +48,15 @@ public class MMController : MonoBehaviour
         }
     }
 
-    public void UsernameInput(string username){
-        PhotonNetwork.NickName=username;
+    public void UsernameInput(string playerName){
+        PhotonNetwork.NickName=playerName;
+        settingsController.SetPlayerName(playerName);
     }
 
-    public void RoomNumberInput(string roomNumber){
-        Debug.Log("Room number is: " + roomNumber);
-        lobbyController.UpdateRoomNumber(roomNumber);
+    public void RoomNumberInput(string roomName){
+        Debug.Log("Room number is: " + roomName);
+        lobbyController.UpdateRoomNumber(roomName);
+        settingsController.SetRoomName(roomName);
     }
 
     public void LoadSelectModeScreen()

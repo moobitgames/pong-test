@@ -19,13 +19,16 @@ public class GameSetupController : MonoBehaviour
             PhotonNetwork.Instantiate(Path.Combine("PhotonPrefabs", "Paddle"), Vector3.zero, Quaternion.identity);
             hash.Add("Rot",0);
         }else{
+            GameObject paddle=null;
             if((int) PhotonNetwork.MasterClient.CustomProperties["Rot"]==0){
-                PhotonNetwork.Instantiate(Path.Combine("PhotonPrefabs", "Paddle"), Vector3.zero, Quaternion.Euler(new Vector3(0,0,180)));
+                paddle=PhotonNetwork.Instantiate(Path.Combine("PhotonPrefabs", "Paddle"), Vector3.zero, Quaternion.Euler(new Vector3(0,0,180)));
                 hash.Add("Rot",180);
             }else{
-                PhotonNetwork.Instantiate(Path.Combine("PhotonPrefabs", "Paddle"), Vector3.zero, Quaternion.identity);
+                paddle=PhotonNetwork.Instantiate(Path.Combine("PhotonPrefabs", "Paddle"), Vector3.zero, Quaternion.identity);
                 hash.Add("Rot",0);
             }
+            paddle.tag="Paddle2";
+
         }
         hash.Add("Score",0);
         PhotonNetwork.LocalPlayer.SetCustomProperties(hash);

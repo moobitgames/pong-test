@@ -8,6 +8,8 @@ TagManager:
   - Paddle
   - EndOne
   - EndTwo
+  - Paddle2
+  - SettingsController
   layers:
   - Default
   - TransparentFX
