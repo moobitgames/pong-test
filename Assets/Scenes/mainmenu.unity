@@ -263,6 +263,7 @@ GameObject:
   - component: {fileID: 22067074}
   - component: {fileID: 22067073}
   - component: {fileID: 22067072}
+  - component: {fileID: 22067075}
   m_Layer: 5
   m_Name: InputField (Room number)
   m_TagString: Untagged
@@ -435,6 +436,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 22067070}
   m_CullTransparentMesh: 0
+--- !u!114 &22067075
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 22067070}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc11b873d24a5c647bbdf9f8463825e2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  type: room
 --- !u!1 &56374104
 GameObject:
   m_ObjectHideFlags: 0
@@ -1320,7 +1334,7 @@ GameObject:
   - component: {fileID: 330182114}
   - component: {fileID: 330182113}
   m_Layer: 5
-  m_Name: Text
+  m_Name: VolumeLabel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1476,6 +1490,7 @@ GameObject:
   - component: {fileID: 403971865}
   - component: {fileID: 403971864}
   - component: {fileID: 403971863}
+  - component: {fileID: 403971866}
   m_Layer: 5
   m_Name: InputField (Name)
   m_TagString: Untagged
@@ -1648,6 +1663,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 403971861}
   m_CullTransparentMesh: 0
+--- !u!114 &403971866
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 403971861}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc11b873d24a5c647bbdf9f8463825e2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  type: name
 --- !u!1 &428010756
 GameObject:
   m_ObjectHideFlags: 0
@@ -3659,6 +3687,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   lobbyController: {fileID: 1188215688}
+  settingsController: {fileID: 1011775218}
   introScreen: {fileID: 1182981931}
   selectModeScreen: {fileID: 291138146}
   hostGameScreen: {fileID: 1385438678}
@@ -3851,7 +3880,7 @@ GameObject:
   - component: {fileID: 1011775218}
   m_Layer: 0
   m_Name: SettingsController
-  m_TagString: Untagged
+  m_TagString: SettingsController
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3870,6 +3899,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   settingMenu: {fileID: 1216990212}
   regionSelect: {fileID: 1628579320}
+  playerName: 
+  roomName: 
+  regionString: 
+  musicVolume: 5
 --- !u!4 &1011775219
 Transform:
   m_ObjectHideFlags: 0
@@ -5017,7 +5050,7 @@ GameObject:
   - component: {fileID: 1234521385}
   - component: {fileID: 1234521384}
   m_Layer: 5
-  m_Name: Text
+  m_Name: SettingsLabel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5538,6 +5571,7 @@ GameObject:
   - component: {fileID: 1552195711}
   - component: {fileID: 1552195710}
   - component: {fileID: 1552195709}
+  - component: {fileID: 1552195712}
   m_Layer: 5
   m_Name: InputField (Room number)
   m_TagString: Untagged
@@ -5710,6 +5744,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1552195707}
   m_CullTransparentMesh: 0
+--- !u!114 &1552195712
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1552195707}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc11b873d24a5c647bbdf9f8463825e2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  type: room
 --- !u!1 &1554077855
 GameObject:
   m_ObjectHideFlags: 0
@@ -6224,6 +6271,7 @@ GameObject:
   - component: {fileID: 1634641597}
   - component: {fileID: 1634641596}
   - component: {fileID: 1634641595}
+  - component: {fileID: 1634641598}
   m_Layer: 5
   m_Name: InputField (Name)
   m_TagString: Untagged
@@ -6396,6 +6444,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1634641593}
   m_CullTransparentMesh: 0
+--- !u!114 &1634641598
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1634641593}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc11b873d24a5c647bbdf9f8463825e2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  type: name
 --- !u!1 &1642895831
 GameObject:
   m_ObjectHideFlags: 0
