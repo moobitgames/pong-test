@@ -42,6 +42,8 @@ MonoBehaviour:
   - RPC_SendName
   - RPC_setInPlay
   - RPC_bounce
+  - RPC_clientGoal
+  - RPC_setIsTurn
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

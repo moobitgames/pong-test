@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using Photon.Pun;
 using Hashtable = ExitGames.Client.Photon.Hashtable;    
@@ -11,6 +11,9 @@ public class BallController : MonoBehaviourPunCallbacks {
     [SerializeField] float scale=1;
     float xSpeed;
     float ySpeed;
+    bool clientGoal=false;
+    bool masterGoal=false;
+    Collider2D endGoal;
 
     void Start()
     {
@@ -45,6 +48,9 @@ public class BallController : MonoBehaviourPunCallbacks {
 
     [PunRPC]
     private void RPC_bounce(){
+        masterGoal=false;
+        clientGoal=false;
+
          ySpeed = ySpeed * -1;
 
             if(ySpeed > 0)
@@ -67,7 +73,6 @@ public class BallController : MonoBehaviourPunCallbacks {
 
     void OnCollisionEnter2D(Collision2D other)
     {
-        
         if(other.transform.tag =="Wall" && PhotonNetwork.IsMasterClient)
         {
             xSpeed = xSpeed*-1;
@@ -78,21 +83,18 @@ public class BallController : MonoBehaviourPunCallbacks {
             RPC_bounce();
         }
         if(other.transform.tag=="Paddle2" && !PhotonNetwork.IsMasterClient){
+            masterGoal=false;
+            clientGoal=false;
             this.photonView.RPC("RPC_bounce",PhotonNetwork.MasterClient,true);
         }
 
     }
-    
-    void OnTriggerEnter2D(Collider2D other)
-    {
-        if((other.tag!="EndOne" && other.tag!="EndTwo")){return;}
 
-
-
+    private void score(){
         int rot=(int)PhotonNetwork.LocalPlayer.CustomProperties["Rot"];
         Hashtable hash=new Hashtable();
         hash.Add("Rot",rot);
-        if((other.tag == "EndOne")==(rot==0))
+        if((endGoal.tag == "EndOne")==(rot==0))
         {
             if(PhotonNetwork.IsMasterClient){
                 int score = (int)PhotonNetwork.LocalPlayer.CustomProperties["Score"];
@@ -100,7 +102,7 @@ public class BallController : MonoBehaviourPunCallbacks {
                 hash.Add("Score",score);
                 PhotonNetwork.SetPlayerCustomProperties(hash);
             }
-            GameController.instance.isTurn=false;
+            GameController.instance.setIsTurn(false);
         }
         else
         {
@@ -108,14 +110,47 @@ public class BallController : MonoBehaviourPunCallbacks {
             if(PhotonNetwork.IsMasterClient){
                 GameController.OtherPlayerScored();
             }
-            GameController.instance.isTurn=true;
-
+            GameController.instance.setIsTurn(true);
         }
 
-
-        GameController.instance.inPlay = false;
+        GameController.instance.setInPlay(false);
         setSpeed = false;
         myRb.velocity = Vector2.zero;
         this.transform.position = new Vector3(0,0,-1); 
+        clientGoal=false;
+        masterGoal=false;
+    }
+
+
+    [PunRPC]
+    private void RPC_clientGoal(bool val){
+        clientGoal=val;
+        Debug.Log("clientGoal");
+        if(clientGoal && masterGoal){
+            score();
+        }
+    }
+    
+    void OnTriggerEnter2D(Collider2D other)
+    {
+
+        if((other.tag!="EndOne" && other.tag!="EndTwo")){return;}
+
+        endGoal=other;
+
+        if(!PhotonNetwork.IsMasterClient){
+            this.photonView.RPC("RPC_clientGoal",PhotonNetwork.MasterClient,true);
+        }
+
+        if(PhotonNetwork.IsMasterClient && !masterGoal){
+            masterGoal=true;
+            Debug.Log("masterGoal");
+        }
+
+        if(clientGoal && masterGoal){
+            score();
+        }
+
+
     }
 }

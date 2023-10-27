@@ -80,6 +80,18 @@ public class GameController : MonoBehaviourPunCallbacks {
             gameReset();
         }
     }
+    [PunRPC] 
+    private void RPC_setIsTurn(bool value){
+        instance.isTurn=value;
+        Debug.Log("setIsTurn_RPC"+value);
+    }
+
+    public void setIsTurn(bool value){
+        instance.isTurn=value;
+        this.photonView.RPC("RPC_setIsTurn",other,!value);
+        Debug.Log("setIsTurn");
+    }
+
 
     public static void OtherPlayerScored(){
         Hashtable hash=new Hashtable();
@@ -91,6 +103,11 @@ public class GameController : MonoBehaviourPunCallbacks {
     [PunRPC]
     private void RPC_setInPlay(bool value){
         instance.inPlay=value;
+    }
+
+    public void setInPlay(bool value){
+        instance.inPlay=value;
+        this.photonView.RPC("RPC_setInPlay",other,value);
     }
 
     // Update is called once per frame
@@ -107,7 +124,7 @@ public class GameController : MonoBehaviourPunCallbacks {
         {
             if(Input.GetKeyDown(KeyCode.Space))
             {
-                inPlay = true;
+                instance.setInPlay(true);
                 if(!PhotonNetwork.IsMasterClient){
                     this.photonView.RPC("RPC_setInPlay",PhotonNetwork.MasterClient,true);
                 }
