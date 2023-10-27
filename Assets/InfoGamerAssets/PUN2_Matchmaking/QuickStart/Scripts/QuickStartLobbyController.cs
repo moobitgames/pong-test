@@ -76,6 +76,7 @@ public class QuickStartLobbyController : MonoBehaviourPunCallbacks
 
     public void UpdateRoomNumber(string num)
     {
+        Debug.Log("UpdateRoomNumber: " + this.roomNumber);
         this.roomNumber = num;
     }
 }

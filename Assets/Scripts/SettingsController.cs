@@ -7,6 +7,7 @@ public class SettingsController : MonoBehaviour
 {
 	[SerializeField] GameObject settingMenu;
 	[SerializeField] Dropdown regionSelect;
+	[SerializeField] QuickStartLobbyController lobbyController;
 
 	// Settings values
 	[SerializeField] string playerName = "";
@@ -36,6 +37,7 @@ public class SettingsController : MonoBehaviour
 	public void changeRegion(){
 		PhotonNetwork.Disconnect();
 		PhotonNetwork.ConnectToRegion(regionSelect.captionText.text);
+		SetRegionString(regionSelect.captionText.text);
 	}
 
 	public string GetPlayerName(){
@@ -44,7 +46,7 @@ public class SettingsController : MonoBehaviour
 
 	public void SetPlayerName(string name){
 		this.playerName = name;
-		Debug.Log("player name: " + this.playerName);
+		Debug.Log("set player name: " + this.playerName);
 	}
 
 	public string GetRoomName(){
@@ -53,6 +55,16 @@ public class SettingsController : MonoBehaviour
 
 	public void SetRoomName(string name){
 		this.roomName = name;
-		Debug.Log("room name: " + this.roomName);
+		lobbyController.UpdateRoomNumber(roomName);
+		Debug.Log("set room name: " + this.roomName);
+	}
+
+	public string GetRegionString(){
+		return this.roomName;
+	}
+
+	public void SetRegionString(string name){
+		this.regionString = name;
+		Debug.Log("set region string: " + this.regionString);
 	}
 }
