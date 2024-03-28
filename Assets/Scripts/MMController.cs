@@ -32,7 +32,8 @@ public class MMController : MonoBehaviour
 
     public void Play()
     {
-        SceneManager.LoadScene(1);
+        Debug.Log("asdfasdf");
+        SceneManager.LoadScene(2);
     }
 
     // Update is called once per frame

@@ -15,8 +15,8 @@ public class Ball : MonoBehaviourPunCallbacks {
     // object state properties
     [SerializeField] float speedUp;
     
-    float xSpeed = 0;
-    float ySpeed = 0;
+    float xSpeed = 1;
+    float ySpeed = 1;
     Vector2 velocityVector = new Vector2(-1,0);
     float positionX; // course correction only
     float positionY; // course correction only
@@ -40,6 +40,7 @@ public class Ball : MonoBehaviourPunCallbacks {
 
     void MoveBall()
     {
+        Debug.Log("asdf111 "+this.transform.position);
         rb.velocity = new Vector2(xSpeed, ySpeed);
     }
 
@@ -106,11 +107,11 @@ public class Ball : MonoBehaviourPunCallbacks {
         }
 
     }
-    
+
     void OnTriggerEnter2D(Collider2D other)
     {
         // move to other end zone?
-        if((other.tag!="EndOne" && other.tag!="EndTwo"))
+        if((other.tag != "EndOne" && other.tag != "EndTwo"))
         {
             return;
         }
@@ -143,7 +144,7 @@ public class Ball : MonoBehaviourPunCallbacks {
 
     public void SetPosition(float x, float y)
     {
-        this.transform.position = new Vector2(x, y); 
+        this.transform.position = new Vector3(x, y, -1); 
     }
     
     public Vector2 GetProjectedImpactPoint()

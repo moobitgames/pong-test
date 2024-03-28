@@ -24,7 +24,7 @@ public class KGameController : MonoBehaviourPunCallbacks {
         
 
     // Settings
-        [SerializeField] int scoreToWin;
+        [SerializeField] int scoreToWin = 3;
 
     // UI components
         public Text textOne;
@@ -86,7 +86,7 @@ public class KGameController : MonoBehaviourPunCallbacks {
 
         other=null;
         isGameOver=false;
-        isBallInPlay = true;
+        isBallInPlay = false;
         gameOverPanel.SetActive(false);
         ball.SetPosition(0,0);
         // !!ballEntity.reset position
@@ -113,7 +113,8 @@ public class KGameController : MonoBehaviourPunCallbacks {
             if(Input.GetKeyDown(KeyCode.Space))
             {
                 // !!startRound()
-                // isBallInPlay = true; del
+                isBallInPlay = true;
+                Debug.Log("asdf777");
                 if(!PhotonNetwork.IsMasterClient){
                     this.photonView.RPC("RPC_setInPlay",PhotonNetwork.MasterClient,true);
                 }
