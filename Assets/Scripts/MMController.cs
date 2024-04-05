@@ -21,7 +21,6 @@ public class MMController : MonoBehaviour
     private GameObject joinGameScreen; // Screen for desktop client to join hosted game
     [SerializeField]
     private GameObject singleSetupScreen; // Screen for desktop client to setup single player game
-
     // UI elements
     // [SerializeField]
     // private GameObject showIntroScreen;
