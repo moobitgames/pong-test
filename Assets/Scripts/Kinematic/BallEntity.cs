@@ -125,7 +125,7 @@ public class BallEntity : MonoBehaviourPunCallbacks {
 
     public void SetPosition(float x, float y)
     {
-        this.transform.position = new Vector2(x, y); 
+        this.transform.position = new Vector3(x, y,-1); 
     }
 
     public float GetDistanceFromBall()

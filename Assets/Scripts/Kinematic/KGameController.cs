@@ -24,7 +24,7 @@ public class KGameController : MonoBehaviourPunCallbacks {
         public bool isRoundInProgress = false;
 
     // Settings
-        [SerializeField] int scoreToWin;
+        [SerializeField] int scoreToWin = 3;
 
     // UI components
         public Text textOne;
