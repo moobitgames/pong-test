@@ -22,6 +22,10 @@ public class BallEntity : MonoBehaviourPunCallbacks {
     float positionY; // course correction only
     bool inMotion;
     Vector2 destination;
+    public bool isBallEntityRestingAtOrigin = true;
+    public float boundDistance = 0.5f;
+    // ball that this entity is tracking
+    [SerializeField] Ball ball;
 
     void Start()
     {
@@ -32,7 +36,7 @@ public class BallEntity : MonoBehaviourPunCallbacks {
     
     void Update () {
         // if game state is active and not equal to destination then move ball
-        if(KGameController.instance.isBallInPlay)
+        if(KGameController.instance.isRoundInProgress)
         {
             MoveBall();
         }
@@ -40,10 +44,18 @@ public class BallEntity : MonoBehaviourPunCallbacks {
 
     void MoveBall()
     {
-        rb.velocity = new Vector2(xSpeed, ySpeed);
+        if (isBallEntityRestingAtOrigin)
+        {
+            if (GetDistanceFromBall() >= boundDistance) {
+                isBallEntityRestingAtOrigin = false;
+            }
+        } else {
+            rb.velocity = new Vector2(xSpeed, ySpeed);
+        }
+        
     }
 
-    [PunRPC]
+    [PunRPC] //DEL
     private void RPC_PaddleBounce(){
          ySpeed = ySpeed * -1;
 
@@ -65,7 +77,7 @@ public class BallEntity : MonoBehaviourPunCallbacks {
             }
     }
 
-    [PunRPC]
+    [PunRPC] //DEL
     private void RPC_NotifyPaddleBounce(){
          ySpeed = ySpeed * -1;
 
@@ -94,46 +106,16 @@ public class BallEntity : MonoBehaviourPunCallbacks {
         {
             xSpeed = xSpeed*-1;
         }
-
-        if (other.transform.tag == "Paddle" && PhotonNetwork.IsMasterClient)
-        {
-            ySpeed = ySpeed*-1;
-            RPC_NotifyPaddleBounce();
-            RPC_PaddleBounce();
-        }
-        if(other.transform.tag=="Paddle2" && !PhotonNetwork.IsMasterClient){
-            this.photonView.RPC("RPC_PaddleBounce", PhotonNetwork.MasterClient,true);
-        }
-
     }
     
     void OnTriggerEnter2D(Collider2D other)
     {
         // move to other end zone?
-        if((other.tag!="EndOne" && other.tag!="EndTwo"))
+        if(other.tag == "EndZoneWallPanel")
         {
-            return;
+            ySpeed = ySpeed * -1;
+            ToggleIsTracking();
         }
-
-        if(other.tag == "EndTwo")
-        {
-            // player one scores
-            KGameController.instance.GivePointToPlayerOne();
-        }
-        if(other.tag == "EndOne")
-        {
-            // player two scores
-            KGameController.instance.GivePointToPlayerTwo();
-        }
-
-        // post score stuff
-        // TODO: move logic to game controller
-        KGameController.instance.isBallInPlay = false;
-
-        // ToggleBallInMotion(); //?
-        SetVelocity(0, 0);
-        // reset ball to origin
-        SetPosition(0, 0); 
     }
 
     public void SetVelocity(float x, float y)
@@ -145,10 +127,14 @@ public class BallEntity : MonoBehaviourPunCallbacks {
     {
         this.transform.position = new Vector2(x, y); 
     }
-    
-    public Vector2 GetProjectedImpactPoint()
+
+    public float GetDistanceFromBall()
     {
-        //ray casting
-        return new Vector2(0, 0);
+        return Vector3.Distance(transform.position, ball.transform.position);
+    }
+
+    public void ToggleIsTracking()
+    {
+        
     }
 }

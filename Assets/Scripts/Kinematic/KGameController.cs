@@ -19,9 +19,9 @@ public class KGameController : MonoBehaviourPunCallbacks {
         public bool isGameOver = false;
         public bool isTurnToServe = false; // initially true if master
         public bool isHeadingTowardsMe = false; // initially true if master
-        public bool isBallInPlay = false;
+        public bool isBallInMotion = false;
         public bool isBallInBounds = true; // set to false if miss
-        
+        public bool isRoundInProgress = false;
 
     // Settings
         [SerializeField] int scoreToWin;
@@ -37,6 +37,8 @@ public class KGameController : MonoBehaviourPunCallbacks {
         [SerializeField] Text myName;
         [SerializeField] Text theirName;
         [SerializeField] Ball ball;
+        [SerializeField] GameObject endZoneWallPanelOne;
+        [SerializeField] GameObject endZoneWallPanelTwo;
 
     private void Start(){
         GameReset();
@@ -52,6 +54,7 @@ public class KGameController : MonoBehaviourPunCallbacks {
 
     public override void OnEnable()
     {
+        // why we need instance?
         instance = this;
         base.OnEnable();
     }
@@ -66,34 +69,6 @@ public class KGameController : MonoBehaviourPunCallbacks {
         }
     }
 
-    void GameReset(){
-        // game start: 
-        // 1. clear all ui panels
-        // 2. clear player score, ball and paddle positions, lastKnownPositions
-        // 3. set player name?
-        // 4. initialize ball positions based on where ball object was placed?
-        gameOverPanel.SetActive(false); 
-        scoreOne = 0;
-        scoreTwo = 0;
-        if(PhotonNetwork.IsMasterClient)
-        {
-            isTurnToServe = true;
-            isHeadingTowardsMe = true;
-        } else {
-            isTurnToServe = false;
-            isHeadingTowardsMe = false;
-        }
-
-        other=null;
-        isGameOver=false;
-        isBallInPlay = true;
-        gameOverPanel.SetActive(false);
-        ball.SetPosition(0,0);
-        // !!ballEntity.reset position
-
-        Debug.Log("Reseting Game");
-    }
-
     public override void OnPlayerLeftRoom(Player otherPlayer){
         // reset game
         if(!isGameOver){
@@ -101,71 +76,73 @@ public class KGameController : MonoBehaviourPunCallbacks {
         }
     }
 
-    [PunRPC]
-    private void RPC_setInPlay(bool value){
-        instance.isBallInPlay=value;
+    void GameReset(){
+        // game start: 
+        // 1. clear all ui panels
+        // 2. clear player score, ball and paddle positions, lastKnownPositions
+        // 3. set player name?
+        // 4. initialize ball positions based on where ball object was placed?
+        gameOverPanel.SetActive(false); //! move to text component?
+        ball.SetPosition(0,0);
+        scoreOne = 0;
+        scoreTwo = 0;
+
+        isGameOver = false;
+        isTurnToServe = PhotonNetwork.IsMasterClient;
+        isHeadingTowardsMe = PhotonNetwork.IsMasterClient;
+        isBallInBounds = true;
+        isRoundInProgress = false;
+
+        Debug.Log("Reseting Game");
     }
 
     // Update is called once per frame
     void Update () {
-        if(!isGameOver && KGameController.instance.isTurnToServe)
+        if(Input.GetKeyDown(KeyCode.Space))
         {
-            if(Input.GetKeyDown(KeyCode.Space))
-            {
-                // !!startRound()
-                // isBallInPlay = true; del
-                if(!PhotonNetwork.IsMasterClient){
-                    this.photonView.RPC("RPC_setInPlay",PhotonNetwork.MasterClient,true);
-                }
-                // send message space has been pressed
-                // this.photonView.RPC("RPC_SpacePressed",PhotonNetwork.MasterClient,true);
+            if (!isGameOver && !isRoundInProgress && isTurnToServe) {
+                this.photonView.RPC("RPC_SpacePressed", other);
+                StartRound();
             }
         }
         if(Input.GetKeyDown(KeyCode.Escape))
         {
-            PhotonNetwork.LeaveRoom();
-            SceneManager.LoadScene(0);
+            GoToMainMenu();
         }
 
         // TODO: Handling game events as they happen 
     }
 
-    // Helper functions
+    [PunRPC]
+    private void RPC_SpacePressed(){
+        StartRound();
+    }
 
-    public void OnBeginSignalReceived()
-    { 
+    public void StartRound()
+    {
+        isRoundInProgress = true;
+
+        //delay 500ms
+        //set ball entity in motion
+    }
+
     
-    }
-
-    public void SetBallInMotion()
-    {
-
-    }
-
-    public void SetBallEntityInMotion()
-    {
-
-    }
 
     public void ToggleIsHeadingTowardsMe()
     {
-
-    }
-
-    public void MainMenu()
-    {
-        GameReset();
-        PhotonNetwork.LeaveRoom();
-        SceneManager.LoadScene(0);
-    }
-
-    void DeclareWinner(string playerName)
-    {
-        // 1. set game over state to true
-        isGameOver = false;
-        isBallInPlay = false;
-        winnerText.text = playerName + " Wins";
-        gameOverPanel.SetActive(true);
+        isHeadingTowardsMe = !isHeadingTowardsMe;
+        if(isHeadingTowardsMe)
+        {
+            if (PhotonNetwork.IsMasterClient)
+            {
+                endZoneWallPanelOne.SetActive(false);
+                endZoneWallPanelTwo.SetActive(true);
+            } else
+            {
+                endZoneWallPanelOne.SetActive(true);
+                endZoneWallPanelTwo.SetActive(false);
+            }
+        }
     }
 
     //TODO remove references to player 1 and 2
@@ -182,9 +159,13 @@ public class KGameController : MonoBehaviourPunCallbacks {
         if (PhotonNetwork.IsMasterClient)
         {
             isTurnToServe = false;
+            isHeadingTowardsMe = false;
         } else {
             isTurnToServe = true;
+            isHeadingTowardsMe = true;
         }
+        isRoundInProgress = false;
+        ResetBall();
     }
 
     public void GivePointToPlayerTwo()
@@ -199,9 +180,40 @@ public class KGameController : MonoBehaviourPunCallbacks {
         if (PhotonNetwork.IsMasterClient)
         {
             isTurnToServe = true;
+            isHeadingTowardsMe = true;
         } else
         {
             isTurnToServe = false;
+            isHeadingTowardsMe = false;
         }
+        isRoundInProgress = false;
+        ResetBall();
+    }
+
+    // TODO: Helper functions
+    public void RPC_SyncBallPosition()
+    {
+    }
+
+    public void ResetBall()
+    {
+        ball.SetPosition(0, 0);
+        ball.SetVelocity(0, 0);
+        isBallInBounds = true;
+    }
+
+    public void GoToMainMenu()
+    {
+        GameReset(); // DEL?
+        PhotonNetwork.LeaveRoom();
+        SceneManager.LoadScene(0);
+    }
+
+    void DeclareWinner(string playerName)
+    {
+        // 1. set game over state to true
+        isGameOver = true;
+        winnerText.text = playerName + " Wins";
+        gameOverPanel.SetActive(true);
     }
 }
