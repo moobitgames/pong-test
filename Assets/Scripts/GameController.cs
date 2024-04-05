@@ -23,11 +23,14 @@ public class GameController : MonoBehaviourPunCallbacks {
 
     private static Player other;
 
+    private int pingCounter;
+
     [SerializeField] GameObject gameOverPanel;
     [SerializeField] Text winnerText;
 
     [SerializeField] Text myName;
     [SerializeField] Text theirName;
+    [SerializeField] GameObject debugPanel;
 
     private void Start(){
         myName.text=PhotonNetwork.NickName;
@@ -105,17 +108,42 @@ public class GameController : MonoBehaviourPunCallbacks {
         instance.inPlay=value;
     }
 
-    public void setInPlay(bool value){
-        instance.inPlay=value;
-        this.photonView.RPC("RPC_setInPlay",other,value);
+    private int pingCheck(Player player){
+        Hashtable properties= player.CustomProperties;
+        int ping=PhotonNetwork.GetPing();
+        if(properties.ContainsKey("Ping")){
+            properties["Ping"]=ping;
+        }else{
+            properties.Add("Ping",ping);
+        }
+        player.SetCustomProperties(properties);
+        return ping;
     }
 
     // Update is called once per frame
     void Update () {
-        scoreOne=(int) PhotonNetwork.LocalPlayer.CustomProperties["Score"];
-        GameController.instance.textOne.text = scoreOne.ToString();
+
+        if (Input.GetKeyDown(KeyCode.F2))
+        {
+            GameController.instance.debugPanel.GetComponent<MessagePanelController> ().ToggleMessagePanel(); // Show or hide the message panel
+        }
+
+        if(GameController.instance.pingCounter>=60){
+            int localPing=pingCheck(PhotonNetwork.LocalPlayer);
+            string otherPingString="";
+            if(other!=null && other.CustomProperties!=null){
+                int otherPing=pingCheck(other);
+                otherPingString="\nPing2:"+ otherPing.ToString();
+            }
+            GameController.instance.debugPanel.GetComponent<MessagePanelController> ().ShowMessage("Ping:"+ localPing.ToString()+otherPingString);
+            GameController.instance.pingCounter=0;
+        }else{
+            GameController.instance.pingCounter++;
+        }
 
         if(other!=null && other.CustomProperties!=null){
+            scoreOne=(int) PhotonNetwork.LocalPlayer.CustomProperties["Score"];
+            GameController.instance.textOne.text = scoreOne.ToString();
             scoreTwo=(int) other.CustomProperties["Score"];
             GameController.instance.textTwo.text = scoreTwo.ToString();
         }
