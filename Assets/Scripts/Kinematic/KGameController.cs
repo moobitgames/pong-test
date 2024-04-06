@@ -22,6 +22,7 @@ public class KGameController : MonoBehaviourPunCallbacks {
         public bool isBallInMotion = false;
         public bool isBallInBounds = true; // set to false if miss
         public bool isRoundInProgress = false;
+        private int pingCounter;
 
     // Settings
         [SerializeField] int scoreToWin = 3;
@@ -29,6 +30,7 @@ public class KGameController : MonoBehaviourPunCallbacks {
     // UI components
         public Text textOne;
         public Text textTwo;
+        [SerializeField] GameObject debugPanel;
 
     // Game world objects
         private static Player other;
@@ -96,8 +98,37 @@ public class KGameController : MonoBehaviourPunCallbacks {
         Debug.Log("Reseting Game");
     }
 
+    private int pingCheck(Player player){
+        Hashtable properties= player.CustomProperties;
+        int ping=PhotonNetwork.GetPing();
+        if(properties.ContainsKey("Ping")){
+            properties["Ping"]=ping;
+        }else{
+            properties.Add("Ping",ping);
+        }
+        player.SetCustomProperties(properties);
+        return ping;
+    }
+
     // Update is called once per frame
     void Update () {
+        if (Input.GetKeyDown(KeyCode.F2))
+        {
+            KGameController.instance.debugPanel.GetComponent<MessagePanelController> ().ToggleMessagePanel(); // Show or hide the message panel
+        }
+        if(KGameController.instance.pingCounter>=60){
+            int localPing=pingCheck(PhotonNetwork.LocalPlayer);
+            string otherPingString="";
+            if(other!=null && other.CustomProperties!=null){
+                int otherPing=pingCheck(other);
+                otherPingString="\nPing2:"+ otherPing.ToString();
+            }
+            KGameController.instance.debugPanel.GetComponent<MessagePanelController> ().ShowMessage("Ping:"+ localPing.ToString()+otherPingString);
+            KGameController.instance.pingCounter=0;
+        }else{
+            KGameController.instance.pingCounter++;
+        }
+
         if(Input.GetKeyDown(KeyCode.Space))
         {
             if (!isGameOver && !isRoundInProgress && isTurnToServe) {

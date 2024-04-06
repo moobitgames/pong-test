@@ -46,6 +46,7 @@ MonoBehaviour:
   - RPC_NotifyPaddleBounce
   - RPC_PaddleBounce
   - RPC_setIsTurn
+  - RPC_SpacePressed
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

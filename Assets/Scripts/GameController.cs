@@ -108,6 +108,11 @@ public class GameController : MonoBehaviourPunCallbacks {
         instance.inPlay=value;
     }
 
+    public void setInPlay(bool value){
+        instance.inPlay=value;
+        this.photonView.RPC("RPC_setInPlay",other,value);
+    }
+
     private int pingCheck(Player player){
         Hashtable properties= player.CustomProperties;
         int ping=PhotonNetwork.GetPing();
