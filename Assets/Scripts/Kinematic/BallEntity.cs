@@ -15,8 +15,9 @@ public class BallEntity : MonoBehaviourPunCallbacks {
     // object state properties
     [SerializeField] float speedUp;
     
-    float xSpeed = 0;
-    float ySpeed = 0;
+    float xSpeed = -1.9f/60f;
+    float ySpeed = -1.9f/60f;
+    float speedUpAmount = 1.4f;
     Vector2 velocityVector = new Vector2(-1,0);
     float positionX; // course correction only
     float positionY; // course correction only
@@ -26,6 +27,8 @@ public class BallEntity : MonoBehaviourPunCallbacks {
     public float boundDistance = 0.5f;
     // ball that this entity is tracking
     [SerializeField] Ball ball;
+    public bool isCatchingUp = false;
+    [SerializeField] GameObject target;
 
     void Start()
     {
@@ -38,43 +41,29 @@ public class BallEntity : MonoBehaviourPunCallbacks {
         // if game state is active and not equal to destination then move ball
         if(KGameController.instance.isRoundInProgress)
         {
-            MoveBall();
+            SimpleMoveBall();
         }
     }
 
-    void MoveBall()
+    void SimpleMoveBall()
     {
-        if (isBallEntityRestingAtOrigin)
-        {
-            if (GetDistanceFromBall() >= boundDistance) {
-                isBallEntityRestingAtOrigin = false;
-            }
-        } else {
-            rb.velocity = new Vector2(xSpeed, ySpeed);
-        }
-        
+        DisplaceBall(xSpeed, ySpeed);
     }
 
-    [PunRPC] //DEL
-    private void RPC_PaddleBounce(){
-         ySpeed = ySpeed * -1;
+    public float GetDistanceFromTarget()
+    {
+        return Vector3.Distance(transform.position, target.transform.position);
+    }
 
-            if(ySpeed > 0)
-            {
-                ySpeed += speedUp;
-            }
-            else
-            {
-                ySpeed -= speedUp;
-            }
-            if (xSpeed > 0)
-            {
-                xSpeed += speedUp;
-            }
-            else
-            {
-                xSpeed -= speedUp;
-            }
+    void ToggleIsBEHeadingTowardsMe()
+    {
+        KGameController.instance.ToggleIsBEHeadingTowardsMe();
+    }
+
+    void DisplaceBall(float x, float y) 
+    {
+        Vector3 displacement = new Vector3(x, y);
+        transform.position = transform.position += displacement;
     }
 
     [PunRPC] //DEL
@@ -98,43 +87,44 @@ public class BallEntity : MonoBehaviourPunCallbacks {
                 xSpeed -= speedUp;
             }
     }
-
-    void OnCollisionEnter2D(Collision2D other)
-    {
-        
-        if(other.transform.tag =="Wall" && PhotonNetwork.IsMasterClient)
-        {
-            xSpeed = xSpeed*-1;
-        }
-    }
     
     void OnTriggerEnter2D(Collider2D other)
     {
-        // move to other end zone?
-        if(other.tag == "EndZoneWallPanel")
+        if (other.tag == "Paddle")
         {
-            ySpeed = ySpeed * -1;
-            ToggleIsTracking();
+            Debug.Log("BEpaddle: " + transform.position.ToString("F3"));
+            if (KGameController.instance.isBallInBounds)
+            {
+                ySpeed = ySpeed * -1f;
+                
+            }
+        }
+        else if(other.tag == "EndZoneWallPanel")
+        {
+            ySpeed = ySpeed * -1f;
+        }
+        else if(other.tag == "SideWallPanel")
+        {
+            xSpeed = xSpeed * -1;
+            Debug.Log("BEsidewallpanel: " + transform.position.ToString("F3"));
+        }
+        else if(other.tag == "EndzoneBehindPaddle")
+        {
+            KGameController.instance.NotifyOtherPlayerBallMissed();
+        } else
+        {
+            return;
         }
     }
 
     public void SetVelocity(float x, float y)
     {
-        rb.velocity = new Vector2(x, y);
+        xSpeed = x;
+        ySpeed = y;
     }
 
     public void SetPosition(float x, float y)
     {
         this.transform.position = new Vector3(x, y,-1); 
-    }
-
-    public float GetDistanceFromBall()
-    {
-        return Vector3.Distance(transform.position, ball.transform.position);
-    }
-
-    public void ToggleIsTracking()
-    {
-        
     }
 }

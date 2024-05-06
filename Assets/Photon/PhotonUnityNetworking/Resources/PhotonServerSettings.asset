@@ -47,6 +47,8 @@ MonoBehaviour:
   - RPC_PaddleBounce
   - RPC_setIsTurn
   - RPC_SpacePressed
+  - RPC_BallTravelsBehindPaddle
+  - RPC_BallTraveledBehindPaddle
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

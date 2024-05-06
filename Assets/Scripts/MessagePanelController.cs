@@ -4,7 +4,7 @@ using UnityEngine.UI; // If you're using Text for UI
 public class MessagePanelController : MonoBehaviour
 {
     [SerializeField] Text messageText; // Reference to the Text component where messages will be displayed
-    public KeyCode activationKey = KeyCode.F2; // The key to press to show the message panel
+    public KeyCode activationKey = KeyCode.P; // The key to press to show the message panel
     private string errorLog;
     void OnEnable()
     {

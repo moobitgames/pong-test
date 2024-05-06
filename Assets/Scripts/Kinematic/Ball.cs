@@ -17,18 +17,14 @@ public class Ball : MonoBehaviourPunCallbacks {
     [SerializeField] float speedUp;
     
     float boundDistance = 0.5f;
-    float xSpeed = 1;
-    float ySpeed = 1;
+    float xSpeed = -1.9f/60f;
+    float ySpeed = -1.9f/60f;
+    float oldXSpeed = -0.9f/60f;
+    float oldYSpeed = -0.9f/60f;
     Vector2 velocityVector = new Vector2(-1,0);
     float positionX; // course correction only
     float positionY; // course correction only
-    bool inMotion = true;
-    Vector2 destination;
-
-
-    bool isCatchingUp = false;
-    bool isTrackingTarget = false;
-    bool isBallRestingAtOrigin = false;
+    bool isShifting = true;
 
     //test
     // Reference to the object to follow
@@ -64,132 +60,100 @@ public class Ball : MonoBehaviourPunCallbacks {
         // if game round is active
         if(KGameController.instance.isRoundInProgress)
         {
-            if (isBallRestingAtOrigin)
-            {
-                if (KGameController.instance.isHeadingTowardsMe)
-                {
-                    isBallRestingAtOrigin = false;
-                } else
-                {
-                    isBallRestingAtOrigin = true;
-                }
-            } else {
-                SimpleMoveBall();
-            }
-        }
-    }
-
-    void MoveBall()
-    {
-        // if following ball entity
-        if (isTrackingTarget)
-        {
-            if (target != null)
-            {
-                // Add the current target position to history
-                UpdateTargetHistory();
-
-                // Calculate the desired position behind the target
-                Vector3 targetPosition = CalculateTargetPosition();
-
-                // Move towards the desired position
-                if (targetVelocityHistory.Count >= historySize)
-                {
-                    rb.velocity = targetVelocityHistory[0];
-                }
-            }
-        } else // is not tracking ball entity
-        {
-            // is catching up
-            if(isCatchingUp)
-            {
-                if (GetDistanceFromTarget() < 0.01)
-                {
-                    isCatchingUp = false;
-                }
-                rb.velocity = new Vector2(xSpeed*1.1f, ySpeed*1.1f);
-            }
-            else // surpassed
-            {
-                if (GetDistanceFromTarget() > boundDistance)
-                {
-                    rb.velocity = new Vector2(xSpeed, ySpeed);
-                } else
-                {
-                    rb.velocity = new Vector2(xSpeed*1.1f, ySpeed*1.1f);
-                }
-            }
-           // towards destination
-            
+            SimpleMoveBall();
         }
     }
 
     void SimpleMoveBall()
     {
-        rb.velocity = new Vector2(xSpeed, ySpeed);
-    }
-
-    void UpdateTargetHistory()
-    {
-        // Add the current target position to history
-        targetHistory.Add(target.transform.position);
-        targetVelocityHistory.Add(targetRigidBody.velocity);
-
-        // Remove oldest position if history exceeds maximum size
-        if (targetHistory.Count > historySize)
+        // DisplaceBall(xSpeed, ySpeed);
+        // just bounced off enemy paddle and needs to catch up to other player position
+        if (KGameController.instance.isHeadingTowardsMe)
         {
-            targetHistory.RemoveAt(0);
-        }
-        // Remove oldest position if history exceeds maximum size
-        if (targetVelocityHistory.Count > historySize)
-        {
-            targetVelocityHistory.RemoveAt(0);
-        }
-    }
-
-    Vector3 CalculateTargetPosition()
-    {
-        // Calculate the desired time in the past based on distance and speed
-        float desiredTimeInPast = distanceBehind / moveSpeed;
-
-        // Interpolate between history points to find the target position at the desired time in the past
-        Vector3 targetPosition = InterpolateTargetPosition(desiredTimeInPast);
-
-        return targetPosition;
-    }
-
-    Vector3 InterpolateTargetPosition(float desiredTimeInPast)
-    {
-        // If there are not enough history points, return current target position
-        if (targetHistory.Count < 2)
-        {
-            return target.transform.position;
-        }
-
-        // Find the index of the history point closest to the desired time in the past
-        float closestTimeDifference = Mathf.Infinity;
-        int closestIndex = -1;
-        for (int i = 0; i < targetHistory.Count; i++)
-        {
-            float timeDifference = Mathf.Abs(i * historyInterval - desiredTimeInPast);
-            if (timeDifference < closestTimeDifference)
+            if (isShifting)
             {
-                closestTimeDifference = timeDifference;
-                closestIndex = i;
+                DisplaceBall(xSpeed*1.5f, ySpeed*1.5f);
+                if (GetDistanceFromTarget() > boundDistance)
+                {
+                    isShifting = false;
+                }
+            }
+            else
+            {
+                DisplaceBall(xSpeed, ySpeed);
             }
         }
+        else
+        {
+            if (isShifting)
+            {
+                DisplaceBall(xSpeed*.8f, ySpeed*.8f);
+                if (GetDistanceFromTarget() < 0.045)
+                {
+                    isShifting = false;
+                }
+            }
+            else
+            {
+                DisplaceBall(xSpeed, ySpeed);
+            }
+        }
+    }
 
-        // Interpolate between the closest history points
-        int nextIndex = Mathf.Min(closestIndex + 1, targetHistory.Count - 1);
-        float t = desiredTimeInPast / (nextIndex * historyInterval);
-        Vector3 interpolatedPosition = Vector3.Lerp(targetHistory[nextIndex], targetHistory[closestIndex], t);
+    void DisplaceBall(float x, float y) 
+    {
+        Vector3 displacement = new Vector3(x, y);
+        transform.position = transform.position += displacement;
+    }
 
-        return interpolatedPosition;
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if(other.tag == "EndZoneWallPanel" && KGameController.instance.isHeadingTowardsMe)
+        {
+            KGameController.instance.NotifyOtherPlayerBallMissed();
+        }
+        else if(other.tag == "Paddle")
+        {
+            Debug.Log("paddle: " + transform.position.ToString("F3"));
+            ToggleIsHeadingTowardsMe();
+            isShifting = true;
+            ySpeed = ySpeed * -1f;
+        }
+        else if(other.tag == "EndZoneWallPanel")
+        {
+            ToggleIsHeadingTowardsMe();
+            isShifting = true;
+            if (KGameController.instance.isHeadingTowardsMe) //opposite player hits
+            {
+                oldXSpeed = oldXSpeed * 1f;
+                oldYSpeed = oldYSpeed * -1f;
+                ySpeed = ySpeed * -1f;
+            }
+        }
+        else if(other.tag == "SideWallPanel")
+        {
+            Debug.Log("sidewallpanel: " + transform.position.ToString("F3"));
+            xSpeed = xSpeed * -1;
+            oldXSpeed = oldXSpeed * -1f;
+        }
+        else if(other.tag == "EndTwo")
+        {
+            // player one scores
+            KGameController.instance.GivePointToPlayerOne();
+        }
+        else if(other.tag == "EndOne")
+        {
+            // player two scores
+            KGameController.instance.GivePointToPlayerTwo();
+        } else
+        {
+            return;
+        }
     }
 
     [PunRPC]
     private void RPC_PaddleBounce(){
-        ySpeed = ySpeed * -1;
+        ySpeed = ySpeed * -1.1f;
 
         if(ySpeed > 0)
         {
@@ -253,29 +217,6 @@ public class Ball : MonoBehaviourPunCallbacks {
         }
     }
 
-    void OnTriggerEnter2D(Collider2D other)
-    {
-        // move to other end zone?
-        if(other.tag == "EndZoneWallPanel")
-        {
-            ySpeed = ySpeed * -1;
-            ToggleIsTracking();
-        }
-        else if(other.tag == "EndTwo")
-        {
-            // player one scores
-            KGameController.instance.GivePointToPlayerOne();
-        }
-        else if(other.tag == "EndOne")
-        {
-            // player two scores
-            KGameController.instance.GivePointToPlayerTwo();
-        } else
-        {
-            return;
-        }
-    }
-
     void ToggleIsHeadingTowardsMe()
     {
         KGameController.instance.ToggleIsHeadingTowardsMe();
@@ -283,7 +224,7 @@ public class Ball : MonoBehaviourPunCallbacks {
 
     void ToggleIsTracking()
     {
-        isTrackingTarget = false;
+        // isTrackingTarget = false;
     }
 
     public float GetDistanceFromTarget()
@@ -293,7 +234,8 @@ public class Ball : MonoBehaviourPunCallbacks {
 
     public void SetVelocity(float x, float y)
     {
-        rb.velocity = new Vector2(x, y);
+        xSpeed = x;
+        ySpeed = y;
     }
 
     public void SetPosition(float x, float y)
