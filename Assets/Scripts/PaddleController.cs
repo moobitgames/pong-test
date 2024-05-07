@@ -10,6 +10,7 @@ public class PaddleController : MonoBehaviour
 
     // Use this for initialization
     private void Start(){
+        Debug.Log("qwerty");
         myPV = GetComponent<PhotonView>();
         if(myPV.IsMine){
             Camera.main.transform.rotation = transform.rotation;
