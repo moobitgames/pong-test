@@ -1192,11 +1192,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   scale: 1
   speedUp: 0
-  isBallEntityRestingAtOrigin: 1
   boundDistance: 0.5
-  ball: {fileID: 1469507653}
-  isCatchingUp: 0
-  target: {fileID: 1469507650}
+  target: {fileID: 1469507653}
 --- !u!114 &867871405
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2000,7 +1997,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f47bc76b1d55546eda3030af4b575f3b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scale: 1
   speedUp: 0
   target: {fileID: 867871403}
   historySize: 100
@@ -2067,7 +2063,6 @@ MonoBehaviour:
   isBallInBounds: 1
   isHeadingTowardsMe: 0
   isBEHeadingTowardsMe: 1
-  isOtherPlayerWallPanelActive: 1
   scoreToWin: 3
   textOne: {fileID: 775687718}
   textTwo: {fileID: 2067645372}

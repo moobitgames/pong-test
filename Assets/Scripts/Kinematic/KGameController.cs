@@ -19,9 +19,7 @@ public class KGameController : MonoBehaviourPunCallbacks {
         public bool isBallInBounds = true; // set to false if player misses and ball is behind paddle
         public bool isHeadingTowardsMe = true; // initially true if master
         public bool isBEHeadingTowardsMe = true; // initially true if master
-        // public bool isOtherPlayerWallPanelActive = true;
         private int pingCounter;
-
         private bool debuggingEndPanel = false;
 
     // Settings
@@ -55,12 +53,10 @@ public class KGameController : MonoBehaviourPunCallbacks {
         if (PhotonNetwork.PlayerListOthers.Length>0){
             otherPlayerWallPanel = endZoneWallPanelOne;
             myWallPanel = endZoneWallPanelTwo;
-            Debug.Log("abcB");
         } else 
         {
             otherPlayerWallPanel = endZoneWallPanelTwo;
             myWallPanel = endZoneWallPanelOne;
-            Debug.Log("abcA");
         }
     }
 
@@ -81,12 +77,11 @@ public class KGameController : MonoBehaviourPunCallbacks {
     }
 
     public override void OnJoinedRoom(){
-        Debug.Log("abcA");
+        // TODO this code is not exexcuting,investigate why
         if (PhotonNetwork.PlayerListOthers.Length>0){
             other=PhotonNetwork.PlayerListOthers[0];
             otherPlayerWallPanel = endZoneWallPanelOne;
             myWallPanel = endZoneWallPanelTwo;
-            Debug.Log("abcB");
         } else 
         {
             otherPlayerWallPanel = endZoneWallPanelTwo;
@@ -108,8 +103,8 @@ public class KGameController : MonoBehaviourPunCallbacks {
         // 3. set player name?
         // 4. initialize ball positions based on where ball object was placed?
         gameOverPanel.SetActive(false); //! move to text component?
-        ball.SetPosition(0,0);
-        ballEntity.SetPosition(0,0);
+        ball.SetPosition(-2, 0);
+        ballEntity.SetPosition(-2, 0);
         scoreOne = 0;
         scoreTwo = 0;
 
@@ -180,11 +175,9 @@ public class KGameController : MonoBehaviourPunCallbacks {
     public void StartRound()
     {
         isRoundInProgress = true;
-        Debug.Log("abc2" + otherPlayerWallPanel);
         otherPlayerWallPanel.SetActive(true);
         
-        myWallPanel.SetActive(false);
-        Debug.Log("qq " + endZoneWallPanelOne.activeSelf);
+        // myWallPanel.SetActive(false);
         // endZoneWallPanelOne.SetActive(false);
     }
 
@@ -253,8 +246,11 @@ public class KGameController : MonoBehaviourPunCallbacks {
 
     public void ResetBall()
     {
-        ball.SetPosition(0, 0);
-        ballEntity.SetPosition(0 ,0);
+        // ball.SetPosition(0, 0);
+        // ballEntity.SetPosition(0 ,0);
+        ball.SetPosition(-2, 0);
+        ballEntity.SetPosition(-2, 0);
+
         ball.SetVelocity(0, 0);
         ballEntity.SetVelocity(0 ,0);
         isBallInBounds = true;

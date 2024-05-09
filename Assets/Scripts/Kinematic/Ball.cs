@@ -7,23 +7,15 @@ using System.Collections.Generic;
 public class Ball : MonoBehaviourPunCallbacks {
 
     // game object components
-    Rigidbody2D rb;
-    Collider2D collider;
-
-    // object settings
-    [SerializeField] float scale=1;
+    Rigidbody2D rb; //del
+    Collider2D collider; //del
 
     // object state properties
     [SerializeField] float speedUp;
     
     float boundDistance = 0.5f;
-    float xSpeed = -1.9f/60f;
-    float ySpeed = -1.9f/60f;
-    float oldXSpeed = -0.9f/60f;
-    float oldYSpeed = -0.9f/60f;
-    Vector2 velocityVector = new Vector2(-1,0);
-    float positionX; // course correction only
-    float positionY; // course correction only
+    float xSpeed = -0.4f/60f;
+    float ySpeed = -0.4f/60f;
     bool isShifting = true;
 
     //test
@@ -108,33 +100,31 @@ public class Ball : MonoBehaviourPunCallbacks {
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if(other.tag == "EndZoneWallPanel" && KGameController.instance.isHeadingTowardsMe)
-        {
-            KGameController.instance.NotifyOtherPlayerBallMissed();
-        }
-        else if(other.tag == "Paddle")
+        if(other.tag == "Paddle")
         {
             Debug.Log("paddle: " + transform.position.ToString("F3"));
             ToggleIsHeadingTowardsMe();
             isShifting = true;
             ySpeed = ySpeed * -1f;
         }
+        else if(other.tag == "EndZoneNotificationZone" && KGameController.instance.isHeadingTowardsMe)
+        {
+            KGameController.instance.NotifyOtherPlayerBallMissed();
+        }
         else if(other.tag == "EndZoneWallPanel")
         {
-            ToggleIsHeadingTowardsMe();
-            isShifting = true;
-            if (KGameController.instance.isHeadingTowardsMe) //opposite player hits
+            if (!KGameController.instance.isHeadingTowardsMe) //opposite player hits
             {
-                oldXSpeed = oldXSpeed * 1f;
-                oldYSpeed = oldYSpeed * -1f;
+                ToggleIsHeadingTowardsMe();
+                isShifting = true;
                 ySpeed = ySpeed * -1f;
             }
+            return;
         }
         else if(other.tag == "SideWallPanel")
         {
             Debug.Log("sidewallpanel: " + transform.position.ToString("F3"));
             xSpeed = xSpeed * -1;
-            oldXSpeed = oldXSpeed * -1f;
         }
         else if(other.tag == "EndTwo")
         {
@@ -197,34 +187,28 @@ public class Ball : MonoBehaviourPunCallbacks {
 
     void OnCollisionEnter2D(Collision2D other)
     {
-        
-        if(other.transform.tag =="Wall")
-        {
-            xSpeed = xSpeed*-1;
-        }
+        // if(other.transform.tag =="Wall")
+        // {
+        //     xSpeed = xSpeed*-1;
+        //     Debug.Log("ava");
+        // }
 
-        if (other.transform.tag == "Paddle")
-        {
-            if (KGameController.instance.isHeadingTowardsMe)
-            {
-                ySpeed = ySpeed * -1;
-                ToggleIsTracking();
-                RPC_NotifyPaddleBounce();
-                KGameController.instance.isHeadingTowardsMe = false;
-            } else {
-                return;
-            }
-        }
+        // if (other.transform.tag == "Paddle")
+        // {
+        //     if (KGameController.instance.isHeadingTowardsMe)
+        //     {
+        //         ySpeed = ySpeed * -1;
+        //         RPC_NotifyPaddleBounce();
+        //         KGameController.instance.isHeadingTowardsMe = false;
+        //     } else {
+        //         return;
+        //     }
+        // }
     }
 
     void ToggleIsHeadingTowardsMe()
     {
         KGameController.instance.ToggleIsHeadingTowardsMe();
-    }
-
-    void ToggleIsTracking()
-    {
-        // isTrackingTarget = false;
     }
 
     public float GetDistanceFromTarget()
