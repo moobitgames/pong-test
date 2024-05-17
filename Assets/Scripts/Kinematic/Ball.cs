@@ -6,50 +6,23 @@ using System.Collections.Generic;
 
 public class Ball : MonoBehaviourPunCallbacks {
 
-    // game object components
-    Rigidbody2D rb; //del
-    Collider2D collider; //del
-
-    // object state properties
+    // Object state properties
     [SerializeField] float speedUp;
     
     float boundDistance = 0.5f;
-    float xSpeed = -0.4f/60f;
-    float ySpeed = -0.4f/60f;
+    float xSpeed = -1f/60f;
+    float ySpeed = -1f/60f;
     bool isShifting = true;
 
-    //test
     // Reference to the object to follow
     [SerializeField] GameObject target;
-    Rigidbody2D targetRigidBody;
-
-    // Number of history points to store
-    public int historySize = 100;
-    
-    // Time interval between history points
-    public float historyInterval = 0.1f;
-
-    // Distance behind the target
-    public float distanceBehind;
-
-    // Speed of movement
-    public float moveSpeed;
-
-    // List to store history of target positions
-    private List<Vector3> targetHistory = new List<Vector3>();
-    // List to store history of target velocities
-    private List<Vector3> targetVelocityHistory = new List<Vector3>();
 
     void Start()
     {
-        // get game object components
-        rb = GetComponent<Rigidbody2D>();
-        collider = GetComponent<Collider2D>();
-        targetRigidBody = target.GetComponent<Rigidbody2D>();
     }
     
     void Update() {
-        // if game round is active
+        // if game round is active, move ball
         if(KGameController.instance.isRoundInProgress)
         {
             SimpleMoveBall();
@@ -58,7 +31,6 @@ public class Ball : MonoBehaviourPunCallbacks {
 
     void SimpleMoveBall()
     {
-        // DisplaceBall(xSpeed, ySpeed);
         // just bounced off enemy paddle and needs to catch up to other player position
         if (KGameController.instance.isHeadingTowardsMe)
         {
@@ -106,10 +78,12 @@ public class Ball : MonoBehaviourPunCallbacks {
             ToggleIsHeadingTowardsMe();
             isShifting = true;
             ySpeed = ySpeed * -1f;
+            Debug.Log("paddle speed: " + ySpeed);
         }
-        else if(other.tag == "EndZoneNotificationZone" && KGameController.instance.isHeadingTowardsMe)
+        else if(other.tag == "NotificationZone" && KGameController.instance.isHeadingTowardsMe)
         {
             KGameController.instance.NotifyOtherPlayerBallMissed();
+            KGameController.instance.SetMyWallPanel(false);
         }
         else if(other.tag == "EndZoneWallPanel")
         {
@@ -141,56 +115,14 @@ public class Ball : MonoBehaviourPunCallbacks {
         }
     }
 
-    [PunRPC]
-    private void RPC_PaddleBounce(){
-        ySpeed = ySpeed * -1.1f;
-
-        if(ySpeed > 0)
-        {
-            ySpeed += speedUp;
-        }
-        else
-        {
-            ySpeed -= speedUp;
-        }
-        if (xSpeed > 0)
-        {
-            xSpeed += speedUp;
-        }
-        else
-        {
-            xSpeed -= speedUp;
-        }
-    }
-
-    [PunRPC]
-    private void RPC_NotifyPaddleBounce(){
-         ySpeed = ySpeed * -1;
-
-            if(ySpeed > 0)
-            {
-                ySpeed += speedUp;
-            }
-            else
-            {
-                ySpeed -= speedUp;
-            }
-            if (xSpeed > 0)
-            {
-                xSpeed += speedUp;
-            }
-            else
-            {
-                xSpeed -= speedUp;
-            }
-    }
+    
 
     void OnCollisionEnter2D(Collision2D other)
     {
+        // TODO: add back in going with collision rout
         // if(other.transform.tag =="Wall")
         // {
         //     xSpeed = xSpeed*-1;
-        //     Debug.Log("ava");
         // }
 
         // if (other.transform.tag == "Paddle")

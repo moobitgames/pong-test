@@ -14,9 +14,9 @@ public class KGameController : MonoBehaviourPunCallbacks {
         public int scoreOne = 0;
         public int scoreTwo = 0;
         public bool isGameOver = false;
-        public bool isTurnToServe = false; // initially true if master
+        public bool isTurnToServe = false; // whether something happens if user presses space, initially true if master
         public bool isRoundInProgress = false; // whether ball is moving
-        public bool isBallInBounds = true; // set to false if player misses and ball is behind paddle
+        // public bool isBallInBounds = true; // set to false if player misses and ball is behind paddle
         public bool isHeadingTowardsMe = true; // initially true if master
         public bool isBEHeadingTowardsMe = true; // initially true if master
         private int pingCounter;
@@ -67,7 +67,7 @@ public class KGameController : MonoBehaviourPunCallbacks {
 
     public override void OnEnable()
     {
-        // why we need instance?
+        // TODO: why do we need instance?
         instance = this;
         base.OnEnable();
     }
@@ -111,7 +111,7 @@ public class KGameController : MonoBehaviourPunCallbacks {
         isGameOver = false;
         isTurnToServe = PhotonNetwork.IsMasterClient;
         isHeadingTowardsMe = PhotonNetwork.IsMasterClient;
-        isBallInBounds = true;
+        // isBallInBounds = true; del
         isRoundInProgress = false;
     }
 
@@ -133,7 +133,9 @@ public class KGameController : MonoBehaviourPunCallbacks {
         {
             KGameController.instance.debugPanel.GetComponent<MessagePanelController> ().ToggleMessagePanel(); // Show or hide the message panel
         }
-        if(KGameController.instance.pingCounter>=60){
+
+        // debug panel
+        if (KGameController.instance.pingCounter>=60){
             int localPing=pingCheck(PhotonNetwork.LocalPlayer);
             string otherPingString="";
             if(other!=null && other.CustomProperties!=null){
@@ -142,19 +144,21 @@ public class KGameController : MonoBehaviourPunCallbacks {
             }
             KGameController.instance.debugPanel.GetComponent<MessagePanelController> ().ShowMessage("Ping:"+ localPing.ToString()+otherPingString);
             KGameController.instance.pingCounter=0;
-        }else{
+        } else {
             KGameController.instance.pingCounter++;
         }
 
-        if(Input.GetKeyDown(KeyCode.Space))
+        // user presses space
+        if (Input.GetKeyDown(KeyCode.Space))
         {
-            if (!isGameOver && !isRoundInProgress && isTurnToServe) {
+            if (!isGameOver && !isRoundInProgress && isTurnToServe)
+            {
                 this.photonView.RPC("RPC_SpacePressed", other);
                 StartRound();
-                Debug.Log("qwe");
             }
         }
-        if(Input.GetKeyDown(KeyCode.Escape))
+        // user presses escape
+        if (Input.GetKeyDown(KeyCode.Escape))
         {
             GoToMainMenu();
         }
@@ -162,28 +166,37 @@ public class KGameController : MonoBehaviourPunCallbacks {
         // TODO: Handling game events as they happen 
     }
 
+    // * DOC:
+    // * This function is called to notify other players that a player has pressed space
     [PunRPC]
     private void RPC_SpacePressed(){
         StartRound();
-    }
-
-    [PunRPC]
-    private void RPC_BallTraveledBehindPaddle(){
-        otherPlayerWallPanel.SetActive(false);
     }
 
     public void StartRound()
     {
         isRoundInProgress = true;
         otherPlayerWallPanel.SetActive(true);
-        
-        // myWallPanel.SetActive(false);
-        // endZoneWallPanelOne.SetActive(false);
     }
 
+    // * DOC:
+    // * This function is called whenever a ball passes into the space behind a receiving
+    // * player's paddle but before hitting the end zone score area. This is to give enough
+    // * time to opposing players to disable their wall panels to allow their ball entity to
+    // * pass through
     public void NotifyOtherPlayerBallMissed()
     {
-        this.photonView.RPC("BallTraveledBehindPaddle", other);
+        this.photonView.RPC("BallTraveledBehindOtherPaddle", other);
+    }
+
+    [PunRPC]
+    private void RPC_BallTraveledBehindOtherPaddle(){
+        otherPlayerWallPanel.SetActive(false);
+    }
+
+    public void SetMyWallPanel(bool status)
+    {
+        myWallPanel.SetActive(status);
     }
 
     public void ToggleIsHeadingTowardsMe()
@@ -193,14 +206,8 @@ public class KGameController : MonoBehaviourPunCallbacks {
             return;
         }
     }
-
-    public void ToggleIsBEHeadingTowardsMe()
-    {
-        isBEHeadingTowardsMe = !isBEHeadingTowardsMe;
-    }
-
+    
     //TODO remove references to player 1 and 2
-
     public void GivePointToPlayerOne()
     {
         scoreOne++;
@@ -219,7 +226,7 @@ public class KGameController : MonoBehaviourPunCallbacks {
             isHeadingTowardsMe = true;
         }
         isRoundInProgress = false;
-        ResetBall();
+        ResetRound();
     }
 
     public void GivePointToPlayerTwo()
@@ -241,19 +248,20 @@ public class KGameController : MonoBehaviourPunCallbacks {
             isHeadingTowardsMe = false;
         }
         isRoundInProgress = false;
-        ResetBall();
+        ResetRound();
     }
 
+    public void ResetRound()
+    {
+        ResetBall();
+        SetMyWallPanel(true);
+    }
+
+    //TODO remove references to player 1 and 2
     public void ResetBall()
     {
-        // ball.SetPosition(0, 0);
-        // ballEntity.SetPosition(0 ,0);
         ball.SetPosition(-2, 0);
         ballEntity.SetPosition(-2, 0);
-
-        ball.SetVelocity(0, 0);
-        ballEntity.SetVelocity(0 ,0);
-        isBallInBounds = true;
         isRoundInProgress = false;
     }
 

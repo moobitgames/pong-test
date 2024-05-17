@@ -5,49 +5,29 @@ using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 public class BallEntity : MonoBehaviourPunCallbacks {
 
-    // game object components
-    Rigidbody2D rb;
-    Collider2D collider;
-
-    // object settings
-    [SerializeField] float scale=1;
-
-    // object state properties
-    [SerializeField] float speedUp;
-    
-    float xSpeed = -0.4f/60f;
-    float ySpeed = -0.4f/60f;
-    public float boundDistance = 0.5f;
-    [SerializeField] Ball target; // ball that this entity is tracking
+    // Object state properties
+    float xSpeed = -1f/60f;
+    float ySpeed = -1f/60f;
+    [SerializeField] Ball target; // Ball that this entity is tracking
 
     void Start()
     {
-        // get game object components
-        rb = GetComponent<Rigidbody2D>();
-        collider = GetComponent<Collider2D>();
     }
     
     void Update () {
-        // if game state is active and not equal to destination then move ball
+        // move ball only if round is in progress
         if(KGameController.instance.isRoundInProgress)
         {
             SimpleMoveBall();
         }
     }
 
+    // * DOC:
+    // * BallEntity represents the ball object in an idealized environment with no lag
+    // * and acts as the source of truth for where an idealized ball should be
     void SimpleMoveBall()
     {
         DisplaceBall(xSpeed, ySpeed);
-    }
-
-    public float GetDistanceFromTarget()
-    {
-        return Vector3.Distance(transform.position, target.transform.position);
-    }
-
-    void ToggleIsBEHeadingTowardsMe()
-    {
-        KGameController.instance.ToggleIsBEHeadingTowardsMe();
     }
 
     void DisplaceBall(float x, float y) 
@@ -56,6 +36,11 @@ public class BallEntity : MonoBehaviourPunCallbacks {
         transform.position = transform.position += displacement;
     }
     
+    // * DOC:
+    // * BallEntity should only bounce off of SideWallPanels and EndZoneWallPanels
+    // * Until it gets an rpc saying other wise, it continues to move as if in
+    // * a perfect match with no misses. Upon bouncing it corrects the position of
+    // * the visible ball
     void OnTriggerEnter2D(Collider2D other)
     {
         if(other.tag == "EndZoneWallPanel")
@@ -63,28 +48,36 @@ public class BallEntity : MonoBehaviourPunCallbacks {
             ySpeed = ySpeed * -1f;
             CourseCorrect();
         }
-        // else if (other.tag == "Paddle")
-        // {
-        //     Debug.Log("BEpaddle: " + transform.position.ToString("F3"));
-        //     if (KGameController.instance.isBallInBounds)
-        //     {
-        //         ySpeed = ySpeed * -1f;
-                
-        //     }
-        // }
         else if(other.tag == "SideWallPanel")
         {
             xSpeed = xSpeed * -1f;
             CourseCorrect();
-            Debug.Log("BEsidewallpanel: " + transform.position.ToString("F3"));
         }
-        else if(other.tag == "EndzoneBehindPaddle")
-        {
-            // KGameController.instance.NotifyOtherPlayerBallMissed();
-        } else
+        else
         {
             return;
         }
+    }
+
+    // * DOC:
+    // * Calculate the position of where the visible Ball should be, had it bounced off
+    // * the same spot as ball entity.
+    // TODO: implement ray casting to account for when projected posistion is in opposite direction
+    public void CourseCorrect()
+    {
+        float distance = GetDistanceFromTarget();
+        float degrees = 45f;
+        float angle = (degrees * Mathf.PI) / 180f;
+        float xMagnitude = distance * Mathf.Cos(angle) * Mathf.Sign(xSpeed);
+        float yMagnitude = distance * Mathf.Sin(angle) * Mathf.Sign(ySpeed);
+        float newX = this.transform.position.x + xMagnitude;
+        float newY = this.transform.position.y + yMagnitude;
+        target.SetPosition(newX, newY);
+    }
+
+    public float GetDistanceFromTarget()
+    {
+        return Vector3.Distance(transform.position, target.transform.position);
     }
 
     public void SetVelocity(float x, float y)
@@ -95,21 +88,6 @@ public class BallEntity : MonoBehaviourPunCallbacks {
 
     public void SetPosition(float x, float y)
     {
-        this.transform.position = new Vector3(x, y,-1); 
-    }
-
-    public void CourseCorrect()
-    {
-        float distance = GetDistanceFromTarget();
-        float degrees = 45f;
-        float angle = (degrees * Mathf.PI) / 180f;
-        float xMagnitude = distance * Mathf.Cos(angle) * Mathf.Sign(xSpeed);
-        float yMagnitude = distance * Mathf.Sin(angle) * Mathf.Sign(ySpeed);
-        float newX = this.transform.position.x + xMagnitude;
-        float newY = this.transform.position.y + yMagnitude;
-        Debug.Log("111: " + target.transform.position.ToString("F3"));
-        target.SetPosition(newX, newY);
-        Debug.Log("111: " + target.transform.position.ToString("F3"));
-
+        this.transform.position = new Vector3(x, y, -1); 
     }
 }
