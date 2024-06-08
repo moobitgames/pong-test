@@ -21,6 +21,7 @@ public class KGameController : MonoBehaviourPunCallbacks {
         public bool isBEHeadingTowardsMe = true; // initially true if master
         private int pingCounter;
         private bool debuggingEndPanel = false;
+        public bool isMasterClient = false;
 
     // Settings
         [SerializeField] int scoreToWin = 3;
@@ -110,6 +111,7 @@ public class KGameController : MonoBehaviourPunCallbacks {
 
         isGameOver = false;
         isTurnToServe = PhotonNetwork.IsMasterClient;
+        isMasterClient = PhotonNetwork.IsMasterClient;
         isHeadingTowardsMe = PhotonNetwork.IsMasterClient;
         // isBallInBounds = true; del
         isRoundInProgress = false;
@@ -186,7 +188,7 @@ public class KGameController : MonoBehaviourPunCallbacks {
     // * pass through
     public void NotifyOtherPlayerBallMissed()
     {
-        this.photonView.RPC("BallTraveledBehindOtherPaddle", other);
+        this.photonView.RPC("RPC_BallTraveledBehindOtherPaddle", other);
     }
 
     [PunRPC]

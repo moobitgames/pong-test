@@ -8,11 +8,11 @@ TagManager:
   - Paddle
   - EndOne
   - EndTwo
-  - Paddle2
   - SettingsController
   - EndZoneWallPanel
   - SideWallPanel
   - NotificationZone
+  - Bullet
   layers:
   - Default
   - TransparentFX

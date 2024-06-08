@@ -27,7 +27,7 @@ public class GameSetupController : MonoBehaviour
                 paddle=PhotonNetwork.Instantiate(Path.Combine("PhotonPrefabs", "Paddle"), Vector3.zero, Quaternion.identity);
                 hash.Add("Rot",0);
             }
-            paddle.tag="Paddle2";
+            paddle.tag="Paddle";
 
         }
         hash.Add("Score",0);

@@ -6,8 +6,8 @@ using Hashtable = ExitGames.Client.Photon.Hashtable;
 public class BallEntity : MonoBehaviourPunCallbacks {
 
     // Object state properties
-    float xSpeed = -1f/60f;
-    float ySpeed = -1f/60f;
+    float xSpeed = -1.5f/60f;
+    float ySpeed = -1.5f/60f;
     [SerializeField] Ball target; // Ball that this entity is tracking
 
     void Start()
@@ -16,7 +16,7 @@ public class BallEntity : MonoBehaviourPunCallbacks {
     
     void Update () {
         // move ball only if round is in progress
-        if(KGameController.instance.isRoundInProgress)
+        if(KGameController.instance.isRoundInProgress && KGameController.instance.isMasterClient)
         {
             SimpleMoveBall();
         }
@@ -72,7 +72,11 @@ public class BallEntity : MonoBehaviourPunCallbacks {
         float yMagnitude = distance * Mathf.Sin(angle) * Mathf.Sign(ySpeed);
         float newX = this.transform.position.x + xMagnitude;
         float newY = this.transform.position.y + yMagnitude;
+
+        // set position
         target.SetPosition(newX, newY);
+        // TODO: set direction
+        // TODO: set speed 
     }
 
     public float GetDistanceFromTarget()

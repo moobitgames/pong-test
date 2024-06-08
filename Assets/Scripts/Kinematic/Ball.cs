@@ -10,8 +10,8 @@ public class Ball : MonoBehaviourPunCallbacks {
     [SerializeField] float speedUp;
     
     float boundDistance = 0.5f;
-    float xSpeed = -1f/60f;
-    float ySpeed = -1f/60f;
+    [SerializeField] float xSpeed = -1.5f/60f;
+    [SerializeField] float ySpeed = -1.5f/60f;
     bool isShifting = true;
 
     // Reference to the object to follow
@@ -19,6 +19,8 @@ public class Ball : MonoBehaviourPunCallbacks {
 
     void Start()
     {
+        xSpeed = -1.5f/60f;
+        ySpeed = -1.5f/60f;
     }
     
     void Update() {
@@ -74,11 +76,12 @@ public class Ball : MonoBehaviourPunCallbacks {
     {
         if(other.tag == "Paddle")
         {
-            Debug.Log("paddle: " + transform.position.ToString("F3"));
+            Debug.Log("paddle speed before: " + ySpeed);
+            // Debug.Log("paddle: " + transform.position.ToString("F3"));
             ToggleIsHeadingTowardsMe();
             isShifting = true;
             ySpeed = ySpeed * -1f;
-            Debug.Log("paddle speed: " + ySpeed);
+            Debug.Log("paddle speed after: " + ySpeed);
         }
         else if(other.tag == "NotificationZone" && KGameController.instance.isHeadingTowardsMe)
         {
