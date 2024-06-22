@@ -25,6 +25,8 @@ public class KGameController : MonoBehaviourPunCallbacks {
 
     // Settings
         [SerializeField] int scoreToWin = 3;
+        int originX = -2;
+        int originY = 0;
 
     // UI components
         public Text textOne;
@@ -46,8 +48,6 @@ public class KGameController : MonoBehaviourPunCallbacks {
         private GameObject myWallPanel;
 
     private void Start(){
-        GameReset();
-
         // set player name
         myName.text=PhotonNetwork.NickName;
 
@@ -59,6 +59,7 @@ public class KGameController : MonoBehaviourPunCallbacks {
             otherPlayerWallPanel = endZoneWallPanelTwo;
             myWallPanel = endZoneWallPanelOne;
         }
+        GameReset();
     }
 
     // might not be needed
@@ -104,8 +105,8 @@ public class KGameController : MonoBehaviourPunCallbacks {
         // 3. set player name?
         // 4. initialize ball positions based on where ball object was placed?
         gameOverPanel.SetActive(false); //! move to text component?
-        ball.SetPosition(-2, 0);
-        ballEntity.SetPosition(-2, 0);
+        ball.SetPosition(originX, originY);
+        ballEntity.SetPosition(originX, originY);
         scoreOne = 0;
         scoreTwo = 0;
 
@@ -113,8 +114,8 @@ public class KGameController : MonoBehaviourPunCallbacks {
         isTurnToServe = PhotonNetwork.IsMasterClient;
         isMasterClient = PhotonNetwork.IsMasterClient;
         isHeadingTowardsMe = PhotonNetwork.IsMasterClient;
-        // isBallInBounds = true; del
         isRoundInProgress = false;
+        ResetRound();
     }
 
     private int pingCheck(Player player){
@@ -136,7 +137,7 @@ public class KGameController : MonoBehaviourPunCallbacks {
             KGameController.instance.debugPanel.GetComponent<MessagePanelController> ().ToggleMessagePanel(); // Show or hide the message panel
         }
 
-        // debug panel
+        // debug panel logger
         if (KGameController.instance.pingCounter>=60){
             int localPing=pingCheck(PhotonNetwork.LocalPlayer);
             string otherPingString="";
@@ -144,7 +145,10 @@ public class KGameController : MonoBehaviourPunCallbacks {
                 int otherPing=pingCheck(other);
                 otherPingString="\nPing2:"+ otherPing.ToString();
             }
-            KGameController.instance.debugPanel.GetComponent<MessagePanelController> ().ShowMessage("Ping:"+ localPing.ToString()+otherPingString);
+            // KGameController.instance.debugPanel.GetComponent<MessagePanelController> ().ShowMessage("Ping:"+ localPing.ToString()+otherPingString);
+            //TODO achen remove getComponent
+            KGameController.instance.debugPanel.GetComponent<MessagePanelController> ().LogValue("Ping local", localPing.ToString());
+            KGameController.instance.debugPanel.GetComponent<MessagePanelController> ().LogValue("Ping other", otherPingString);
             KGameController.instance.pingCounter=0;
         } else {
             KGameController.instance.pingCounter++;
@@ -177,8 +181,10 @@ public class KGameController : MonoBehaviourPunCallbacks {
 
     public void StartRound()
     {
+        // int direction = isHeadingTowardsMe ? -1 : 1;
+        // ball.SetVelocity(direction*1.2f/60f, direction*1.2f/60f);
+        // ballEntity.SetVelocity(direction*1.2f/60f, direction*1.2f/60f);
         isRoundInProgress = true;
-        otherPlayerWallPanel.SetActive(true);
     }
 
     // * DOC:
@@ -193,12 +199,19 @@ public class KGameController : MonoBehaviourPunCallbacks {
 
     [PunRPC]
     private void RPC_BallTraveledBehindOtherPaddle(){
-        otherPlayerWallPanel.SetActive(false);
+        SetOtherPlayerWallPanel(false);
     }
 
     public void SetMyWallPanel(bool status)
     {
         myWallPanel.SetActive(status);
+        KGameController.instance.debugPanel.GetComponent<MessagePanelController> ().LogValue("My wall panel", status.ToString());
+    }
+
+    public void SetOtherPlayerWallPanel(bool status)
+    {
+        otherPlayerWallPanel.SetActive(status);
+        KGameController.instance.debugPanel.GetComponent<MessagePanelController> ().LogValue("Other wall panel", status.ToString());
     }
 
     public void ToggleIsHeadingTowardsMe()
@@ -227,7 +240,6 @@ public class KGameController : MonoBehaviourPunCallbacks {
             isTurnToServe = true;
             isHeadingTowardsMe = true;
         }
-        isRoundInProgress = false;
         ResetRound();
     }
 
@@ -249,22 +261,24 @@ public class KGameController : MonoBehaviourPunCallbacks {
             isTurnToServe = false;
             isHeadingTowardsMe = false;
         }
-        isRoundInProgress = false;
         ResetRound();
     }
 
     public void ResetRound()
     {
         ResetBall();
+        SetOtherPlayerWallPanel(true);
         SetMyWallPanel(true);
     }
 
     //TODO remove references to player 1 and 2
     public void ResetBall()
     {
-        ball.SetPosition(-2, 0);
-        ballEntity.SetPosition(-2, 0);
+        ball.SetPosition(originX, originY);
+        ballEntity.SetPosition(originX, originY);
         isRoundInProgress = false;
+        // ball.SetVelocity(0, 0);
+        // ballEntity.SetVelocity(0, 0);
     }
 
     public void GoToMainMenu()

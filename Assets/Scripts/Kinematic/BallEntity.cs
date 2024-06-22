@@ -6,10 +6,11 @@ using Hashtable = ExitGames.Client.Photon.Hashtable;
 public class BallEntity : MonoBehaviourPunCallbacks {
 
     // Object state properties
-    float xSpeed = -1.5f/60f;
-    float ySpeed = -1.5f/60f;
+    float xSpeed = -1.2f/60f;
+    float ySpeed = -1.2f/60f;
     [SerializeField] Ball target; // Ball that this entity is tracking
-
+    // private bool isStartingFromRest = true;
+    
     void Start()
     {
     }
@@ -73,10 +74,19 @@ public class BallEntity : MonoBehaviourPunCallbacks {
         float newX = this.transform.position.x + xMagnitude;
         float newY = this.transform.position.y + yMagnitude;
 
-        // set position
-        target.SetPosition(newX, newY);
-        // TODO: set direction
-        // TODO: set speed 
+        bool inBounds =
+            newX > -2.56 &&
+            newX < 2.56 &&
+            newY > -2.45 &&
+            newY < 2.45;
+
+        if (inBounds)
+        {
+            // set position
+            target.SetPosition(newX, newY);
+            // set direction/speed
+            target.SetVelocity(xSpeed, ySpeed);
+        }
     }
 
     public float GetDistanceFromTarget()
