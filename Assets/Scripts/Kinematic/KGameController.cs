@@ -181,9 +181,6 @@ public class KGameController : MonoBehaviourPunCallbacks {
 
     public void StartRound()
     {
-        // int direction = isHeadingTowardsMe ? -1 : 1;
-        // ball.SetVelocity(direction*1.2f/60f, direction*1.2f/60f);
-        // ballEntity.SetVelocity(direction*1.2f/60f, direction*1.2f/60f);
         isRoundInProgress = true;
     }
 
