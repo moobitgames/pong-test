@@ -21,7 +21,7 @@ public class PaddleController : MonoBehaviour
     [PunRPC]
     void RPC_SendName(string nameSent)
     {
-        GameController.instance.SetTheirName(nameSent);
+        KGameController.instance.SetTheirName(nameSent);
     }
 
     // Update is called once per frame
