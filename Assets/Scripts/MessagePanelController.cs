@@ -4,9 +4,9 @@ using System.Collections.Generic;
 
 public class MessagePanelController : MonoBehaviour
 {
-    [SerializeField] Text messageText; // Reference to the Text component where messages will be displayed
-    public KeyCode activationKey = KeyCode.P; // The key to press to show the message panel
-    private string errorLog;
+    [SerializeField] Text _messageText; // Reference to the Text component where messages will be displayed
+    public KeyCode _activationKey = KeyCode.P; // The key to press to show the message panel
+    private string _errorLog;
 
     private Dictionary<string, string> logValues = new Dictionary<string, string>();
 
@@ -24,8 +24,8 @@ public class MessagePanelController : MonoBehaviour
     {
         if (type == LogType.Exception || type == LogType.Error)
         {
-            errorLog="\nError: " + logString + "\n" + stackTrace;
-            ShowMessage(messageText.text + errorLog);
+            _errorLog="\nError: " + logString + "\n" + stackTrace;
+            ShowMessage(_messageText.text + _errorLog);
         }
     }
 
@@ -33,7 +33,7 @@ public class MessagePanelController : MonoBehaviour
     void Update()
     {
         // Check if the activation key is pressed
-        if (Input.GetKeyDown(activationKey))
+        if (Input.GetKeyDown(_activationKey))
         {
             ToggleMessagePanel(); // Show or hide the message panel
         }
@@ -43,9 +43,9 @@ public class MessagePanelController : MonoBehaviour
     // TODO delete
     public void ShowMessage(string message)
     {
-        if (messageText != null)
+        if (_messageText != null)
         {
-            messageText.text = message+errorLog;
+            _messageText.text = message+ _errorLog;
         }
         else
         {
@@ -67,7 +67,7 @@ public class MessagePanelController : MonoBehaviour
             textBody += $"{entry.Key}: {entry.Value} \n";
         }
         
-        messageText.text = textBody;
+        _messageText.text = textBody;
     }
 
     // Hide the panel
