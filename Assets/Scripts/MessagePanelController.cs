@@ -8,7 +8,7 @@ public class MessagePanelController : MonoBehaviour
     public KeyCode _activationKey = KeyCode.P; // The key to press to show the message panel
     private string _errorLog;
 
-    private Dictionary<string, string> logValues = new Dictionary<string, string>();
+    private Dictionary<string, string> _logValues = new Dictionary<string, string>();
 
     void OnEnable()
     {
@@ -25,44 +25,44 @@ public class MessagePanelController : MonoBehaviour
         if (type == LogType.Exception || type == LogType.Error)
         {
             _errorLog="\nError: " + logString + "\n" + stackTrace;
-            ShowMessage(_messageText.text + _errorLog);
+            ShowErrorMessage(_messageText.text + _errorLog);
         }
     }
 
-
-    void Update()
-    {
-        // Check if the activation key is pressed
-        if (Input.GetKeyDown(_activationKey))
-        {
-            ToggleMessagePanel(); // Show or hide the message panel
-        }
-    }
-
-    // Show a message on the panel
-    // TODO delete
-    public void ShowMessage(string message)
+    // Append an error message to the text on the panel
+    public void ShowErrorMessage(string message)
     {
         if (_messageText != null)
         {
-            _messageText.text = message+ _errorLog;
+            _messageText.text = message + _errorLog;
         }
         else
         {
             Debug.LogError("Message Text component is not assigned!");
         }
     }
+
+    void Update()
+    {
+        // Check if the activation key is pressed
+        if (Input.GetKeyDown(_activationKey))
+        {
+            ToggleMessagePanel();
+        }
+    }
+
     
     public void LogValue(string key, string value)
     {
-        logValues[key] = value;
+        _logValues[key] = value;
         DisplayAllValues();
     }
     
+    // Displays all values contained in the log values dictionary
     public void DisplayAllValues()
     {
         string textBody = "";
-        foreach(var entry in logValues)
+        foreach(var entry in _logValues)
         {
             textBody += $"{entry.Key}: {entry.Value} \n";
         }
@@ -70,15 +70,9 @@ public class MessagePanelController : MonoBehaviour
         _messageText.text = textBody;
     }
 
-    // Hide the panel
-    public void HideMessage()
-    {
-        gameObject.SetActive(false); // Hide the panel
-    }
-
     // Toggle the message panel visibility
     public void ToggleMessagePanel()
     {
-        gameObject.SetActive(!gameObject.activeSelf); // Toggle the panel visibility
+        gameObject.SetActive(!gameObject.activeSelf);
     }
 }
