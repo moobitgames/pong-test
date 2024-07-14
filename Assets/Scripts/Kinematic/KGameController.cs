@@ -32,10 +32,11 @@ public class KGameController : MonoBehaviourPunCallbacks {
         public Text textOne;
         public Text textTwo;
         [SerializeField] GameObject debugPanel;
+        MessagePanelController _logPanel;
         [SerializeField] GameObject gameOverPanel;
         [SerializeField] Text winnerText;
         [SerializeField] Text myName;
-        [SerializeField] Text theirName;
+        [SerializeField] Text theirName;        
 
     // Game world objects
         private static Player other;
@@ -50,6 +51,7 @@ public class KGameController : MonoBehaviourPunCallbacks {
     private void Start(){
         // set player name
         myName.text=PhotonNetwork.NickName;
+        _logPanel = debugPanel.GetComponent<MessagePanelController>();
 
         if (PhotonNetwork.PlayerListOthers.Length>0){
             otherPlayerWallPanel = endZoneWallPanelOne;
@@ -119,8 +121,8 @@ public class KGameController : MonoBehaviourPunCallbacks {
     }
 
     private int pingCheck(Player player){
-        Hashtable properties= player.CustomProperties;
-        int ping=PhotonNetwork.GetPing();
+        Hashtable properties = player.CustomProperties;
+        int ping = PhotonNetwork.GetPing();
         if(properties.ContainsKey("Ping")){
             properties["Ping"]=ping;
         }else{
@@ -134,24 +136,22 @@ public class KGameController : MonoBehaviourPunCallbacks {
     void Update () {
         if (Input.GetKeyDown(KeyCode.F2))
         {
-            KGameController.instance.debugPanel.GetComponent<MessagePanelController> ().ToggleMessagePanel(); // Show or hide the message panel
+            _logPanel.ToggleMessagePanel(); // Show or hide the message panel
         }
 
         // debug panel logger
-        if (KGameController.instance.pingCounter>=60){
+        if (this.pingCounter>=60){
             int localPing=pingCheck(PhotonNetwork.LocalPlayer);
             string otherPingString="";
             if(other!=null && other.CustomProperties!=null){
                 int otherPing=pingCheck(other);
                 otherPingString="\nPing2:"+ otherPing.ToString();
             }
-            // KGameController.instance.debugPanel.GetComponent<MessagePanelController> ().ShowMessage("Ping:"+ localPing.ToString()+otherPingString);
-            //TODO achen remove getComponent
-            KGameController.instance.debugPanel.GetComponent<MessagePanelController> ().LogValue("Ping local", localPing.ToString());
-            KGameController.instance.debugPanel.GetComponent<MessagePanelController> ().LogValue("Ping other", otherPingString);
-            KGameController.instance.pingCounter=0;
+            _logPanel.LogValue("Ping local", localPing.ToString());
+            _logPanel.LogValue("Ping other", otherPingString);
+            this.pingCounter=0;
         } else {
-            KGameController.instance.pingCounter++;
+            this.pingCounter++;
         }
 
         // user presses space
@@ -202,13 +202,13 @@ public class KGameController : MonoBehaviourPunCallbacks {
     public void SetMyWallPanel(bool status)
     {
         myWallPanel.SetActive(status);
-        KGameController.instance.debugPanel.GetComponent<MessagePanelController> ().LogValue("My wall panel", status.ToString());
+        _logPanel.LogValue("My wall panel", status.ToString());
     }
 
     public void SetOtherPlayerWallPanel(bool status)
     {
         otherPlayerWallPanel.SetActive(status);
-        KGameController.instance.debugPanel.GetComponent<MessagePanelController> ().LogValue("Other wall panel", status.ToString());
+        _logPanel.LogValue("Other wall panel", status.ToString());
     }
 
     public void ToggleIsHeadingTowardsMe()
@@ -223,7 +223,7 @@ public class KGameController : MonoBehaviourPunCallbacks {
     public void GivePointToPlayerOne()
     {
         scoreOne++;
-        KGameController.instance.textOne.text = scoreOne.ToString();
+        this.textOne.text = scoreOne.ToString();
         if(scoreOne >= scoreToWin)
         {
             DeclareWinner(instance.myName.text);
@@ -243,7 +243,7 @@ public class KGameController : MonoBehaviourPunCallbacks {
     public void GivePointToPlayerTwo()
     {
         scoreTwo++;
-        KGameController.instance.textTwo.text = scoreTwo.ToString();
+        this.textTwo.text = scoreTwo.ToString();
         if(scoreTwo >= scoreToWin)
         {
             DeclareWinner(instance.theirName.text);

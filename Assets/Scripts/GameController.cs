@@ -140,7 +140,7 @@ public class GameController : MonoBehaviourPunCallbacks {
                 int otherPing=pingCheck(other);
                 otherPingString="\nPing2:"+ otherPing.ToString();
             }
-            GameController.instance.debugPanel.GetComponent<MessagePanelController> ().ShowMessage("Ping:"+ localPing.ToString()+otherPingString);
+            GameController.instance.debugPanel.GetComponent<MessagePanelController> ().ShowErrorMessage("Ping:"+ localPing.ToString()+otherPingString);
             GameController.instance.pingCounter=0;
         }else{
             GameController.instance.pingCounter++;

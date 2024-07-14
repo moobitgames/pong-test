@@ -1492,8 +1492,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 156fbc1b57ab0964fae02b5888cbff14, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  messageText: {fileID: 1305440740}
-  activationKey: 112
+  _messageText: {fileID: 1305440740}
+  _activationKey: 112
 --- !u!4 &1129399695
 Transform:
   m_ObjectHideFlags: 0
