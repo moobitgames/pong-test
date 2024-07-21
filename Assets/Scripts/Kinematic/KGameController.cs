@@ -11,62 +11,61 @@ public class KGameController : MonoBehaviourPunCallbacks {
     public static KGameController instance;
 
     // Game state
-        public int scoreOne = 0;
-        public int scoreTwo = 0;
-        public bool isGameOver = false;
-        public bool isTurnToServe = false; // whether something happens if user presses space, initially true if master
-        public bool isRoundInProgress = false; // whether ball is moving
-        // public bool isBallInBounds = true; // set to false if player misses and ball is behind paddle
-        public bool isHeadingTowardsMe = true; // initially true if master
-        public bool isBEHeadingTowardsMe = true; // initially true if master
-        private int pingCounter;
-        private bool debuggingEndPanel = false;
-        public bool isMasterClient = false;
+        public int _scoreOne = 0;
+        public int _scoreTwo = 0;
+        public bool _isGameOver = false;
+        public bool _isTurnToServe = false; // whether something happens if user presses space, initially true if master
+        public bool _isRoundInProgress = false; // whether ball is moving
+        public bool _isHeadingTowardsMe = true; // initially true if master
+        public bool _isBEHeadingTowardsMe = true; // initially true if master
+        private int _pingCounter;
+        private bool _debuggingEndPanel = false;
+        public bool _isMasterClient = false;
 
     // Settings
-        [SerializeField] int scoreToWin = 3;
-        int originX = -2;
-        int originY = 0;
+        [SerializeField] int _scoreToWin = 3;
+        int _originX = -2;
+        int _originY = 0;
 
     // UI components
-        public Text textOne;
-        public Text textTwo;
-        [SerializeField] GameObject debugPanel;
+        public Text _textOne;
+        public Text _textTwo;
+        [SerializeField] GameObject _debugPanel;
         MessagePanelController _logPanel;
-        [SerializeField] GameObject gameOverPanel;
-        [SerializeField] Text winnerText;
-        [SerializeField] Text myName;
-        [SerializeField] Text theirName;        
+        [SerializeField] GameObject _gameOverPanel;
+        [SerializeField] Text _winnerText;
+        [SerializeField] Text _myName;
+        [SerializeField] Text _theirName;        
 
     // Game world objects
         private static Player other;
         
-        [SerializeField] Ball ball;
-        [SerializeField] BallEntity ballEntity;
-        [SerializeField] GameObject endZoneWallPanelOne;
-        [SerializeField] GameObject endZoneWallPanelTwo;
-        private GameObject otherPlayerWallPanel;
-        private GameObject myWallPanel;
+        [SerializeField] Ball _ball;
+        [SerializeField] BallEntity _ballEntity;
+        [SerializeField] GameObject _endZoneWallPanelOne;
+        [SerializeField] GameObject _endZoneWallPanelTwo;
+        private GameObject _otherPlayerWallPanel;
+        private GameObject _myWallPanel;
 
     private void Start(){
         // set player name
-        myName.text=PhotonNetwork.NickName;
-        _logPanel = debugPanel.GetComponent<MessagePanelController>();
+        _myName.text=PhotonNetwork.NickName;
+        _logPanel = _debugPanel.GetComponent<MessagePanelController>();
 
         if (PhotonNetwork.PlayerListOthers.Length>0){
-            otherPlayerWallPanel = endZoneWallPanelOne;
-            myWallPanel = endZoneWallPanelTwo;
+            _otherPlayerWallPanel = _endZoneWallPanelOne;
+            _myWallPanel = _endZoneWallPanelTwo;
         } else 
         {
-            otherPlayerWallPanel = endZoneWallPanelTwo;
-            myWallPanel = endZoneWallPanelOne;
+            _otherPlayerWallPanel = _endZoneWallPanelTwo;
+            _myWallPanel = _endZoneWallPanelOne;
         }
         GameReset();
     }
 
     // might not be needed
     public void SetTheirName(string nameIn){
-        theirName.text=nameIn;
+        _theirName.text=nameIn;
     }
 
     public override void OnEnable()
@@ -84,18 +83,18 @@ public class KGameController : MonoBehaviourPunCallbacks {
         // TODO this code is not exexcuting,investigate why
         if (PhotonNetwork.PlayerListOthers.Length>0){
             other=PhotonNetwork.PlayerListOthers[0];
-            otherPlayerWallPanel = endZoneWallPanelOne;
-            myWallPanel = endZoneWallPanelTwo;
+            _otherPlayerWallPanel = _endZoneWallPanelOne;
+            _myWallPanel = _endZoneWallPanelTwo;
         } else 
         {
-            otherPlayerWallPanel = endZoneWallPanelTwo;
-            myWallPanel = endZoneWallPanelOne;
+            _otherPlayerWallPanel = _endZoneWallPanelTwo;
+            _myWallPanel = _endZoneWallPanelOne;
         }
     }
 
     public override void OnPlayerLeftRoom(Player otherPlayer){
         // reset game
-        if(!isGameOver){
+        if(!_isGameOver){
             GameReset();
         }
     }
@@ -106,17 +105,17 @@ public class KGameController : MonoBehaviourPunCallbacks {
         // 2. clear player score, ball and paddle positions, lastKnownPositions
         // 3. set player name?
         // 4. initialize ball positions based on where ball object was placed?
-        gameOverPanel.SetActive(false); //! move to text component?
-        ball.SetPosition(originX, originY);
-        ballEntity.SetPosition(originX, originY);
-        scoreOne = 0;
-        scoreTwo = 0;
+        _gameOverPanel.SetActive(false); //! move to text component?
+        _ball.SetPosition(_originX, _originY);
+        _ballEntity.SetPosition(_originX, _originY);
+        _scoreOne = 0;
+        _scoreTwo = 0;
 
-        isGameOver = false;
-        isTurnToServe = PhotonNetwork.IsMasterClient;
-        isMasterClient = PhotonNetwork.IsMasterClient;
-        isHeadingTowardsMe = PhotonNetwork.IsMasterClient;
-        isRoundInProgress = false;
+        _isGameOver = false;
+        _isTurnToServe = PhotonNetwork.IsMasterClient;
+        _isMasterClient = PhotonNetwork.IsMasterClient;
+        _isHeadingTowardsMe = PhotonNetwork.IsMasterClient;
+        _isRoundInProgress = false;
         ResetRound();
     }
 
@@ -140,7 +139,7 @@ public class KGameController : MonoBehaviourPunCallbacks {
         }
 
         // debug panel logger
-        if (this.pingCounter>=60){
+        if (this._pingCounter>=60){
             int localPing=pingCheck(PhotonNetwork.LocalPlayer);
             string otherPingString="";
             if(other!=null && other.CustomProperties!=null){
@@ -149,15 +148,15 @@ public class KGameController : MonoBehaviourPunCallbacks {
             }
             _logPanel.LogValue("Ping local", localPing.ToString());
             _logPanel.LogValue("Ping other", otherPingString);
-            this.pingCounter=0;
+            this._pingCounter=0;
         } else {
-            this.pingCounter++;
+            this._pingCounter++;
         }
 
         // user presses space
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            if (!isGameOver && !isRoundInProgress && isTurnToServe)
+            if (!_isGameOver && !_isRoundInProgress && _isTurnToServe)
             {
                 this.photonView.RPC("RPC_SpacePressed", other);
                 StartRound();
@@ -181,7 +180,7 @@ public class KGameController : MonoBehaviourPunCallbacks {
 
     public void StartRound()
     {
-        isRoundInProgress = true;
+        _isRoundInProgress = true;
     }
 
     // * DOC:
@@ -201,20 +200,20 @@ public class KGameController : MonoBehaviourPunCallbacks {
 
     public void SetMyWallPanel(bool status)
     {
-        myWallPanel.SetActive(status);
+        _myWallPanel.SetActive(status);
         _logPanel.LogValue("My wall panel", status.ToString());
     }
 
     public void SetOtherPlayerWallPanel(bool status)
     {
-        otherPlayerWallPanel.SetActive(status);
+        _otherPlayerWallPanel.SetActive(status);
         _logPanel.LogValue("Other wall panel", status.ToString());
     }
 
     public void ToggleIsHeadingTowardsMe()
     {
-        isHeadingTowardsMe = !isHeadingTowardsMe;
-        if (!debuggingEndPanel) {
+        _isHeadingTowardsMe = !_isHeadingTowardsMe;
+        if (!_debuggingEndPanel) {
             return;
         }
     }
@@ -222,41 +221,41 @@ public class KGameController : MonoBehaviourPunCallbacks {
     //TODO remove references to player 1 and 2
     public void GivePointToPlayerOne()
     {
-        scoreOne++;
-        this.textOne.text = scoreOne.ToString();
-        if(scoreOne >= scoreToWin)
+        _scoreOne++;
+        this._textOne.text = _scoreOne.ToString();
+        if(_scoreOne >= _scoreToWin)
         {
-            DeclareWinner(instance.myName.text);
+            DeclareWinner(instance._myName.text);
         }
-        // flip isTurnToServe if necessary
-        if (PhotonNetwork.IsMasterClient)
+        // flip _isTurnToServe if necessary
+        if (_isMasterClient)
         {
-            isTurnToServe = false;
-            isHeadingTowardsMe = false;
+            _isTurnToServe = false;
+            _isHeadingTowardsMe = false;
         } else {
-            isTurnToServe = true;
-            isHeadingTowardsMe = true;
+            _isTurnToServe = true;
+            _isHeadingTowardsMe = true;
         }
         ResetRound();
     }
 
     public void GivePointToPlayerTwo()
     {
-        scoreTwo++;
-        this.textTwo.text = scoreTwo.ToString();
-        if(scoreTwo >= scoreToWin)
+        _scoreTwo++;
+        this._textTwo.text = _scoreTwo.ToString();
+        if(_scoreTwo >= _scoreToWin)
         {
-            DeclareWinner(instance.theirName.text);
+            DeclareWinner(instance._theirName.text);
         }
-        // flip isTurnToServe if necessary
+        // flip _isTurnToServe if necessary
         if (PhotonNetwork.IsMasterClient)
         {
-            isTurnToServe = true;
-            isHeadingTowardsMe = true;
+            _isTurnToServe = true;
+            _isHeadingTowardsMe = true;
         } else
         {
-            isTurnToServe = false;
-            isHeadingTowardsMe = false;
+            _isTurnToServe = false;
+            _isHeadingTowardsMe = false;
         }
         ResetRound();
     }
@@ -271,11 +270,9 @@ public class KGameController : MonoBehaviourPunCallbacks {
     //TODO remove references to player 1 and 2
     public void ResetBall()
     {
-        ball.SetPosition(originX, originY);
-        ballEntity.SetPosition(originX, originY);
-        isRoundInProgress = false;
-        // ball.SetVelocity(0, 0);
-        // ballEntity.SetVelocity(0, 0);
+        _ball.SetPosition(_originX, _originY);
+        _ballEntity.SetPosition(_originX, _originY);
+        _isRoundInProgress = false;
     }
 
     public void GoToMainMenu()
@@ -286,8 +283,8 @@ public class KGameController : MonoBehaviourPunCallbacks {
 
     void DeclareWinner(string playerName)
     {
-        isGameOver = true;
-        winnerText.text = playerName + " Wins";
-        gameOverPanel.SetActive(true);
+        _isGameOver = true;
+        _winnerText.text = playerName + " Wins";
+        _gameOverPanel.SetActive(true);
     }
 }

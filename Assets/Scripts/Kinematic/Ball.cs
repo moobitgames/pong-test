@@ -7,25 +7,25 @@ using System.Collections.Generic;
 public class Ball : MonoBehaviourPunCallbacks {
 
     // Object state properties
-    [SerializeField] float speedUp;
+    [SerializeField] float _speedUp;
     
-    float boundDistance = 0.5f;
-    [SerializeField] float xSpeed = -1.5f/60f;
-    [SerializeField] float ySpeed = -1.5f/60f;
-    bool isShifting = true;
+    float _boundDistance = 0.5f;
+    [SerializeField] float _xSpeed = -1.5f/60f;
+    [SerializeField] float _ySpeed = -1.5f/60f;
+    bool _isShifting = true;
 
     // Reference to the object to follow
     [SerializeField] GameObject target;
 
     void Start()
     {
-        xSpeed = -1.5f/60f;
-        ySpeed = -1.5f/60f;
+        _xSpeed = -1.5f/60f;
+        _ySpeed = -1.5f/60f;
     }
     
     void Update() {
         // if game round is active, move ball
-        if(KGameController.instance.isRoundInProgress)
+        if(KGameController.instance._isRoundInProgress)
         {
             SimpleMoveBall();
         }
@@ -34,34 +34,34 @@ public class Ball : MonoBehaviourPunCallbacks {
     void SimpleMoveBall()
     {
         // just bounced off enemy paddle and needs to catch up to other player position
-        if (KGameController.instance.isHeadingTowardsMe)
+        if (KGameController.instance._isHeadingTowardsMe)
         {
-            if (isShifting)
+            if (_isShifting)
             {
-                DisplaceBall(xSpeed*1.5f, ySpeed*1.5f);
-                if (GetDistanceFromTarget() > boundDistance)
+                DisplaceBall(_xSpeed*1.5f, _ySpeed*1.5f);
+                if (GetDistanceFromTarget() > _boundDistance)
                 {
-                    isShifting = false;
+                    _isShifting = false;
                 }
             }
             else
             {
-                DisplaceBall(xSpeed, ySpeed);
+                DisplaceBall(_xSpeed, _ySpeed);
             }
         }
         else
         {
-            if (isShifting)
+            if (_isShifting)
             {
-                DisplaceBall(xSpeed*.8f, ySpeed*.8f);
+                DisplaceBall(_xSpeed*.8f, _ySpeed*.8f);
                 if (GetDistanceFromTarget() < 0.045)
                 {
-                    isShifting = false;
+                    _isShifting = false;
                 }
             }
             else
             {
-                DisplaceBall(xSpeed, ySpeed);
+                DisplaceBall(_xSpeed, _ySpeed);
             }
         }
     }
@@ -76,32 +76,32 @@ public class Ball : MonoBehaviourPunCallbacks {
     {
         if(other.tag == "Paddle")
         {
-            Debug.Log("paddle speed before: " + ySpeed);
+            Debug.Log("paddle speed before: " + _ySpeed);
             // Debug.Log("paddle: " + transform.position.ToString("F3"));
             ToggleIsHeadingTowardsMe();
-            isShifting = true;
-            ySpeed = ySpeed * -1f;
-            Debug.Log("paddle speed after: " + ySpeed);
+            _isShifting = true;
+            _ySpeed = _ySpeed * -1f;
+            Debug.Log("paddle speed after: " + _ySpeed);
         }
-        else if(other.tag == "NotificationZone" && KGameController.instance.isHeadingTowardsMe)
+        else if(other.tag == "NotificationZone" && KGameController.instance._isHeadingTowardsMe)
         {
             KGameController.instance.NotifyOtherPlayerBallMissed();
             KGameController.instance.SetMyWallPanel(false);
         }
         else if(other.tag == "EndZoneWallPanel")
         {
-            if (!KGameController.instance.isHeadingTowardsMe) //opposite player hits
+            if (!KGameController.instance._isHeadingTowardsMe) //opposite player hits
             {
                 ToggleIsHeadingTowardsMe();
-                isShifting = true;
-                ySpeed = ySpeed * -1f;
+                _isShifting = true;
+                _ySpeed = _ySpeed * -1f;
             }
             return;
         }
         else if(other.tag == "SideWallPanel")
         {
             Debug.Log("sidewallpanel: " + transform.position.ToString("F3"));
-            xSpeed = xSpeed * -1;
+            _xSpeed = _xSpeed * -1;
         }
         else if(other.tag == "EndTwo")
         {
@@ -125,16 +125,16 @@ public class Ball : MonoBehaviourPunCallbacks {
         // TODO: add back in going with collision rout
         // if(other.transform.tag =="Wall")
         // {
-        //     xSpeed = xSpeed*-1;
+        //     _xSpeed = _xSpeed*-1;
         // }
 
         // if (other.transform.tag == "Paddle")
         // {
-        //     if (KGameController.instance.isHeadingTowardsMe)
+        //     if (KGameController.instance._isHeadingTowardsMe)
         //     {
-        //         ySpeed = ySpeed * -1;
+        //         _ySpeed = _ySpeed * -1;
         //         RPC_NotifyPaddleBounce();
-        //         KGameController.instance.isHeadingTowardsMe = false;
+        //         KGameController.instance._isHeadingTowardsMe = false;
         //     } else {
         //         return;
         //     }
@@ -153,8 +153,8 @@ public class Ball : MonoBehaviourPunCallbacks {
 
     public void SetVelocity(float x, float y)
     {
-        xSpeed = x;
-        ySpeed = y;
+        _xSpeed = x;
+        _ySpeed = y;
     }
 
     public void SetPosition(float x, float y)

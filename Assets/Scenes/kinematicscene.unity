@@ -1190,7 +1190,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab4978a299cfb4c4685a4737f3096823, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  target: {fileID: 1469507653}
+  _target: {fileID: 1469507653}
 --- !u!114 &867871405
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1994,9 +1994,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f47bc76b1d55546eda3030af4b575f3b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speedUp: 0
-  xSpeed: -0.008333334
-  ySpeed: -0.008333334
+  _speedUp: 0
+  _xSpeed: -0.025
+  _ySpeed: -0.025
   target: {fileID: 867871403}
 --- !u!1 &1526930327
 GameObject:
@@ -2050,26 +2050,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c603bc586d0a4a5d95f42f6badba06d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scoreOne: 0
-  scoreTwo: 0
-  isGameOver: 0
-  isTurnToServe: 0
-  isRoundInProgress: 0
-  isHeadingTowardsMe: 0
-  isBEHeadingTowardsMe: 1
-  isMasterClient: 0
-  scoreToWin: 3
-  textOne: {fileID: 775687718}
-  textTwo: {fileID: 2067645372}
-  debugPanel: {fileID: 1129399693}
-  gameOverPanel: {fileID: 233732635}
-  winnerText: {fileID: 1034514086}
-  myName: {fileID: 1353642464}
-  theirName: {fileID: 298243360}
-  ball: {fileID: 1469507653}
-  ballEntity: {fileID: 867871404}
-  endZoneWallPanelOne: {fileID: 2125563902}
-  endZoneWallPanelTwo: {fileID: 1306081365}
+  _scoreOne: 0
+  _scoreTwo: 0
+  _isGameOver: 0
+  _isTurnToServe: 0
+  _isRoundInProgress: 0
+  _isHeadingTowardsMe: 1
+  _isBEHeadingTowardsMe: 1
+  _isMasterClient: 0
+  _scoreToWin: 3
+  _textOne: {fileID: 775687718}
+  _textTwo: {fileID: 2067645372}
+  _debugPanel: {fileID: 1129399693}
+  _gameOverPanel: {fileID: 233732635}
+  _winnerText: {fileID: 1034514086}
+  _myName: {fileID: 1353642464}
+  _theirName: {fileID: 298243360}
+  _ball: {fileID: 1469507653}
+  _ballEntity: {fileID: 867871404}
+  _endZoneWallPanelOne: {fileID: 2125563902}
+  _endZoneWallPanelTwo: {fileID: 0}
 --- !u!4 &1526930330
 Transform:
   m_ObjectHideFlags: 0
