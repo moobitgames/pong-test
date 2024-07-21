@@ -2059,17 +2059,17 @@ MonoBehaviour:
   _isBEHeadingTowardsMe: 1
   _isMasterClient: 0
   _scoreToWin: 3
-  textOne: {fileID: 775687718}
-  textTwo: {fileID: 2067645372}
+  _textOne: {fileID: 775687718}
+  _textTwo: {fileID: 2067645372}
   _debugPanel: {fileID: 1129399693}
   _gameOverPanel: {fileID: 233732635}
   _winnerText: {fileID: 1034514086}
   _myName: {fileID: 1353642464}
   _theirName: {fileID: 298243360}
-  ball: {fileID: 1469507653}
-  ballEntity: {fileID: 867871404}
-  endZoneWallPanelOne: {fileID: 2125563902}
-  endZoneWallPanelTwo: {fileID: 1306081365}
+  _ball: {fileID: 1469507653}
+  _ballEntity: {fileID: 867871404}
+  _endZoneWallPanelOne: {fileID: 2125563902}
+  _endZoneWallPanelTwo: {fileID: 0}
 --- !u!4 &1526930330
 Transform:
   m_ObjectHideFlags: 0

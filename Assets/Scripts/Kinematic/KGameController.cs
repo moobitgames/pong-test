@@ -28,8 +28,8 @@ public class KGameController : MonoBehaviourPunCallbacks {
         int _originY = 0;
 
     // UI components
-        public Text textOne;
-        public Text textTwo;
+        public Text _textOne;
+        public Text _textTwo;
         [SerializeField] GameObject _debugPanel;
         MessagePanelController _logPanel;
         [SerializeField] GameObject _gameOverPanel;
@@ -40,12 +40,12 @@ public class KGameController : MonoBehaviourPunCallbacks {
     // Game world objects
         private static Player other;
         
-        [SerializeField] Ball ball;
-        [SerializeField] BallEntity ballEntity;
-        [SerializeField] GameObject endZoneWallPanelOne;
-        [SerializeField] GameObject endZoneWallPanelTwo;
-        private GameObject otherPlayerWallPanel;
-        private GameObject myWallPanel;
+        [SerializeField] Ball _ball;
+        [SerializeField] BallEntity _ballEntity;
+        [SerializeField] GameObject _endZoneWallPanelOne;
+        [SerializeField] GameObject _endZoneWallPanelTwo;
+        private GameObject _otherPlayerWallPanel;
+        private GameObject _myWallPanel;
 
     private void Start(){
         // set player name
@@ -53,12 +53,12 @@ public class KGameController : MonoBehaviourPunCallbacks {
         _logPanel = _debugPanel.GetComponent<MessagePanelController>();
 
         if (PhotonNetwork.PlayerListOthers.Length>0){
-            otherPlayerWallPanel = endZoneWallPanelOne;
-            myWallPanel = endZoneWallPanelTwo;
+            _otherPlayerWallPanel = _endZoneWallPanelOne;
+            _myWallPanel = _endZoneWallPanelTwo;
         } else 
         {
-            otherPlayerWallPanel = endZoneWallPanelTwo;
-            myWallPanel = endZoneWallPanelOne;
+            _otherPlayerWallPanel = _endZoneWallPanelTwo;
+            _myWallPanel = _endZoneWallPanelOne;
         }
         GameReset();
     }
@@ -83,12 +83,12 @@ public class KGameController : MonoBehaviourPunCallbacks {
         // TODO this code is not exexcuting,investigate why
         if (PhotonNetwork.PlayerListOthers.Length>0){
             other=PhotonNetwork.PlayerListOthers[0];
-            otherPlayerWallPanel = endZoneWallPanelOne;
-            myWallPanel = endZoneWallPanelTwo;
+            _otherPlayerWallPanel = _endZoneWallPanelOne;
+            _myWallPanel = _endZoneWallPanelTwo;
         } else 
         {
-            otherPlayerWallPanel = endZoneWallPanelTwo;
-            myWallPanel = endZoneWallPanelOne;
+            _otherPlayerWallPanel = _endZoneWallPanelTwo;
+            _myWallPanel = _endZoneWallPanelOne;
         }
     }
 
@@ -106,8 +106,8 @@ public class KGameController : MonoBehaviourPunCallbacks {
         // 3. set player name?
         // 4. initialize ball positions based on where ball object was placed?
         _gameOverPanel.SetActive(false); //! move to text component?
-        ball.SetPosition(_originX, _originY);
-        ballEntity.SetPosition(_originX, _originY);
+        _ball.SetPosition(_originX, _originY);
+        _ballEntity.SetPosition(_originX, _originY);
         _scoreOne = 0;
         _scoreTwo = 0;
 
@@ -200,13 +200,13 @@ public class KGameController : MonoBehaviourPunCallbacks {
 
     public void SetMyWallPanel(bool status)
     {
-        myWallPanel.SetActive(status);
+        _myWallPanel.SetActive(status);
         _logPanel.LogValue("My wall panel", status.ToString());
     }
 
     public void SetOtherPlayerWallPanel(bool status)
     {
-        otherPlayerWallPanel.SetActive(status);
+        _otherPlayerWallPanel.SetActive(status);
         _logPanel.LogValue("Other wall panel", status.ToString());
     }
 
@@ -222,7 +222,7 @@ public class KGameController : MonoBehaviourPunCallbacks {
     public void GivePointToPlayerOne()
     {
         _scoreOne++;
-        this.textOne.text = _scoreOne.ToString();
+        this._textOne.text = _scoreOne.ToString();
         if(_scoreOne >= _scoreToWin)
         {
             DeclareWinner(instance._myName.text);
@@ -242,7 +242,7 @@ public class KGameController : MonoBehaviourPunCallbacks {
     public void GivePointToPlayerTwo()
     {
         _scoreTwo++;
-        this.textTwo.text = _scoreTwo.ToString();
+        this._textTwo.text = _scoreTwo.ToString();
         if(_scoreTwo >= _scoreToWin)
         {
             DeclareWinner(instance._theirName.text);
@@ -270,8 +270,8 @@ public class KGameController : MonoBehaviourPunCallbacks {
     //TODO remove references to player 1 and 2
     public void ResetBall()
     {
-        ball.SetPosition(_originX, _originY);
-        ballEntity.SetPosition(_originX, _originY);
+        _ball.SetPosition(_originX, _originY);
+        _ballEntity.SetPosition(_originX, _originY);
         _isRoundInProgress = false;
     }
 
