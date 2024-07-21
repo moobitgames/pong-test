@@ -17,7 +17,7 @@ public class BallEntity : MonoBehaviourPunCallbacks {
     
     void Update () {
         // move ball only if round is in progress
-        if(KGameController.instance.isRoundInProgress && KGameController.instance.isMasterClient)
+        if(KGameController.instance._isRoundInProgress && KGameController.instance._isMasterClient)
         {
             SimpleMoveBall();
         }

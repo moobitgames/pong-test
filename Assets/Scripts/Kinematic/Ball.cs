@@ -25,7 +25,7 @@ public class Ball : MonoBehaviourPunCallbacks {
     
     void Update() {
         // if game round is active, move ball
-        if(KGameController.instance.isRoundInProgress)
+        if(KGameController.instance._isRoundInProgress)
         {
             SimpleMoveBall();
         }
@@ -34,7 +34,7 @@ public class Ball : MonoBehaviourPunCallbacks {
     void SimpleMoveBall()
     {
         // just bounced off enemy paddle and needs to catch up to other player position
-        if (KGameController.instance.isHeadingTowardsMe)
+        if (KGameController.instance._isHeadingTowardsMe)
         {
             if (_isShifting)
             {
@@ -83,14 +83,14 @@ public class Ball : MonoBehaviourPunCallbacks {
             _ySpeed = _ySpeed * -1f;
             Debug.Log("paddle speed after: " + _ySpeed);
         }
-        else if(other.tag == "NotificationZone" && KGameController.instance.isHeadingTowardsMe)
+        else if(other.tag == "NotificationZone" && KGameController.instance._isHeadingTowardsMe)
         {
             KGameController.instance.NotifyOtherPlayerBallMissed();
             KGameController.instance.SetMyWallPanel(false);
         }
         else if(other.tag == "EndZoneWallPanel")
         {
-            if (!KGameController.instance.isHeadingTowardsMe) //opposite player hits
+            if (!KGameController.instance._isHeadingTowardsMe) //opposite player hits
             {
                 ToggleIsHeadingTowardsMe();
                 _isShifting = true;
@@ -130,11 +130,11 @@ public class Ball : MonoBehaviourPunCallbacks {
 
         // if (other.transform.tag == "Paddle")
         // {
-        //     if (KGameController.instance.isHeadingTowardsMe)
+        //     if (KGameController.instance._isHeadingTowardsMe)
         //     {
         //         _ySpeed = _ySpeed * -1;
         //         RPC_NotifyPaddleBounce();
-        //         KGameController.instance.isHeadingTowardsMe = false;
+        //         KGameController.instance._isHeadingTowardsMe = false;
         //     } else {
         //         return;
         //     }
