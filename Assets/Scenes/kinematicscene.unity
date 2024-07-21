@@ -1190,7 +1190,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab4978a299cfb4c4685a4737f3096823, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  target: {fileID: 1469507653}
+  _target: {fileID: 1469507653}
 --- !u!114 &867871405
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1994,9 +1994,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f47bc76b1d55546eda3030af4b575f3b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speedUp: 0
-  xSpeed: -0.008333334
-  ySpeed: -0.008333334
+  _speedUp: 0
+  _xSpeed: -0.025
+  _ySpeed: -0.025
   target: {fileID: 867871403}
 --- !u!1 &1526930327
 GameObject:

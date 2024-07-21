@@ -24,9 +24,9 @@ public class KGameController : MonoBehaviourPunCallbacks {
         public bool isMasterClient = false;
 
     // Settings
-        [SerializeField] int scoreToWin = 3;
-        int originX = -2;
-        int originY = 0;
+        [SerializeField] int _scoreToWin = 3;
+        int _originX = -2;
+        int _originY = 0;
 
     // UI components
         public Text textOne;
@@ -107,8 +107,8 @@ public class KGameController : MonoBehaviourPunCallbacks {
         // 3. set player name?
         // 4. initialize ball positions based on where ball object was placed?
         gameOverPanel.SetActive(false); //! move to text component?
-        ball.SetPosition(originX, originY);
-        ballEntity.SetPosition(originX, originY);
+        ball.SetPosition(_originX, _originY);
+        ballEntity.SetPosition(_originX, _originY);
         scoreOne = 0;
         scoreTwo = 0;
 
@@ -224,7 +224,7 @@ public class KGameController : MonoBehaviourPunCallbacks {
     {
         scoreOne++;
         this.textOne.text = scoreOne.ToString();
-        if(scoreOne >= scoreToWin)
+        if(scoreOne >= _scoreToWin)
         {
             DeclareWinner(instance.myName.text);
         }
@@ -244,7 +244,7 @@ public class KGameController : MonoBehaviourPunCallbacks {
     {
         scoreTwo++;
         this.textTwo.text = scoreTwo.ToString();
-        if(scoreTwo >= scoreToWin)
+        if(scoreTwo >= _scoreToWin)
         {
             DeclareWinner(instance.theirName.text);
         }
@@ -271,8 +271,8 @@ public class KGameController : MonoBehaviourPunCallbacks {
     //TODO remove references to player 1 and 2
     public void ResetBall()
     {
-        ball.SetPosition(originX, originY);
-        ballEntity.SetPosition(originX, originY);
+        ball.SetPosition(_originX, _originY);
+        ballEntity.SetPosition(_originX, _originY);
         isRoundInProgress = false;
     }
 
