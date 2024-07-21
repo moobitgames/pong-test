@@ -30,12 +30,12 @@ public class KGameController : MonoBehaviourPunCallbacks {
     // UI components
         public Text textOne;
         public Text textTwo;
-        [SerializeField] GameObject debugPanel;
+        [SerializeField] GameObject _debugPanel;
         MessagePanelController _logPanel;
-        [SerializeField] GameObject gameOverPanel;
-        [SerializeField] Text winnerText;
-        [SerializeField] Text myName;
-        [SerializeField] Text theirName;        
+        [SerializeField] GameObject _gameOverPanel;
+        [SerializeField] Text _winnerText;
+        [SerializeField] Text _myName;
+        [SerializeField] Text _theirName;        
 
     // Game world objects
         private static Player other;
@@ -49,8 +49,8 @@ public class KGameController : MonoBehaviourPunCallbacks {
 
     private void Start(){
         // set player name
-        myName.text=PhotonNetwork.NickName;
-        _logPanel = debugPanel.GetComponent<MessagePanelController>();
+        _myName.text=PhotonNetwork.NickName;
+        _logPanel = _debugPanel.GetComponent<MessagePanelController>();
 
         if (PhotonNetwork.PlayerListOthers.Length>0){
             otherPlayerWallPanel = endZoneWallPanelOne;
@@ -65,7 +65,7 @@ public class KGameController : MonoBehaviourPunCallbacks {
 
     // might not be needed
     public void SetTheirName(string nameIn){
-        theirName.text=nameIn;
+        _theirName.text=nameIn;
     }
 
     public override void OnEnable()
@@ -105,7 +105,7 @@ public class KGameController : MonoBehaviourPunCallbacks {
         // 2. clear player score, ball and paddle positions, lastKnownPositions
         // 3. set player name?
         // 4. initialize ball positions based on where ball object was placed?
-        gameOverPanel.SetActive(false); //! move to text component?
+        _gameOverPanel.SetActive(false); //! move to text component?
         ball.SetPosition(_originX, _originY);
         ballEntity.SetPosition(_originX, _originY);
         _scoreOne = 0;
@@ -225,7 +225,7 @@ public class KGameController : MonoBehaviourPunCallbacks {
         this.textOne.text = _scoreOne.ToString();
         if(_scoreOne >= _scoreToWin)
         {
-            DeclareWinner(instance.myName.text);
+            DeclareWinner(instance._myName.text);
         }
         // flip _isTurnToServe if necessary
         if (_isMasterClient)
@@ -245,7 +245,7 @@ public class KGameController : MonoBehaviourPunCallbacks {
         this.textTwo.text = _scoreTwo.ToString();
         if(_scoreTwo >= _scoreToWin)
         {
-            DeclareWinner(instance.theirName.text);
+            DeclareWinner(instance._theirName.text);
         }
         // flip _isTurnToServe if necessary
         if (PhotonNetwork.IsMasterClient)
@@ -284,7 +284,7 @@ public class KGameController : MonoBehaviourPunCallbacks {
     void DeclareWinner(string playerName)
     {
         _isGameOver = true;
-        winnerText.text = playerName + " Wins";
-        gameOverPanel.SetActive(true);
+        _winnerText.text = playerName + " Wins";
+        _gameOverPanel.SetActive(true);
     }
 }
