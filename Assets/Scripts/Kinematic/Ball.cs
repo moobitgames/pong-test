@@ -7,11 +7,11 @@ using System.Collections.Generic;
 public class Ball : MonoBehaviourPunCallbacks {
 
     // Object state properties
-    [SerializeField] float speedUp;
+    [SerializeField] float _speedUp;
     
-    float boundDistance = 0.5f;
-    [SerializeField] float xSpeed = -1.5f/60f;
-    [SerializeField] float ySpeed = -1.5f/60f;
+    float _boundDistance = 0.5f;
+    [SerializeField] float _xSpeed = -1.5f/60f;
+    [SerializeField] float _ySpeed = -1.5f/60f;
     bool isShifting = true;
 
     // Reference to the object to follow
@@ -19,8 +19,8 @@ public class Ball : MonoBehaviourPunCallbacks {
 
     void Start()
     {
-        xSpeed = -1.5f/60f;
-        ySpeed = -1.5f/60f;
+        _xSpeed = -1.5f/60f;
+        _ySpeed = -1.5f/60f;
     }
     
     void Update() {
@@ -38,22 +38,22 @@ public class Ball : MonoBehaviourPunCallbacks {
         {
             if (isShifting)
             {
-                DisplaceBall(xSpeed*1.5f, ySpeed*1.5f);
-                if (GetDistanceFromTarget() > boundDistance)
+                DisplaceBall(_xSpeed*1.5f, _ySpeed*1.5f);
+                if (GetDistanceFromTarget() > _boundDistance)
                 {
                     isShifting = false;
                 }
             }
             else
             {
-                DisplaceBall(xSpeed, ySpeed);
+                DisplaceBall(_xSpeed, _ySpeed);
             }
         }
         else
         {
             if (isShifting)
             {
-                DisplaceBall(xSpeed*.8f, ySpeed*.8f);
+                DisplaceBall(_xSpeed*.8f, _ySpeed*.8f);
                 if (GetDistanceFromTarget() < 0.045)
                 {
                     isShifting = false;
@@ -61,7 +61,7 @@ public class Ball : MonoBehaviourPunCallbacks {
             }
             else
             {
-                DisplaceBall(xSpeed, ySpeed);
+                DisplaceBall(_xSpeed, _ySpeed);
             }
         }
     }
@@ -76,12 +76,12 @@ public class Ball : MonoBehaviourPunCallbacks {
     {
         if(other.tag == "Paddle")
         {
-            Debug.Log("paddle speed before: " + ySpeed);
+            Debug.Log("paddle speed before: " + _ySpeed);
             // Debug.Log("paddle: " + transform.position.ToString("F3"));
             ToggleIsHeadingTowardsMe();
             isShifting = true;
-            ySpeed = ySpeed * -1f;
-            Debug.Log("paddle speed after: " + ySpeed);
+            _ySpeed = _ySpeed * -1f;
+            Debug.Log("paddle speed after: " + _ySpeed);
         }
         else if(other.tag == "NotificationZone" && KGameController.instance.isHeadingTowardsMe)
         {
@@ -94,14 +94,14 @@ public class Ball : MonoBehaviourPunCallbacks {
             {
                 ToggleIsHeadingTowardsMe();
                 isShifting = true;
-                ySpeed = ySpeed * -1f;
+                _ySpeed = _ySpeed * -1f;
             }
             return;
         }
         else if(other.tag == "SideWallPanel")
         {
             Debug.Log("sidewallpanel: " + transform.position.ToString("F3"));
-            xSpeed = xSpeed * -1;
+            _xSpeed = _xSpeed * -1;
         }
         else if(other.tag == "EndTwo")
         {
@@ -125,14 +125,14 @@ public class Ball : MonoBehaviourPunCallbacks {
         // TODO: add back in going with collision rout
         // if(other.transform.tag =="Wall")
         // {
-        //     xSpeed = xSpeed*-1;
+        //     _xSpeed = _xSpeed*-1;
         // }
 
         // if (other.transform.tag == "Paddle")
         // {
         //     if (KGameController.instance.isHeadingTowardsMe)
         //     {
-        //         ySpeed = ySpeed * -1;
+        //         _ySpeed = _ySpeed * -1;
         //         RPC_NotifyPaddleBounce();
         //         KGameController.instance.isHeadingTowardsMe = false;
         //     } else {
@@ -153,8 +153,8 @@ public class Ball : MonoBehaviourPunCallbacks {
 
     public void SetVelocity(float x, float y)
     {
-        xSpeed = x;
-        ySpeed = y;
+        _xSpeed = x;
+        _ySpeed = y;
     }
 
     public void SetPosition(float x, float y)

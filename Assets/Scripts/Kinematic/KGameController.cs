@@ -274,8 +274,6 @@ public class KGameController : MonoBehaviourPunCallbacks {
         ball.SetPosition(originX, originY);
         ballEntity.SetPosition(originX, originY);
         isRoundInProgress = false;
-        // ball.SetVelocity(0, 0);
-        // ballEntity.SetVelocity(0, 0);
     }
 
     public void GoToMainMenu()
