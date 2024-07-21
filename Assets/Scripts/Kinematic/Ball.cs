@@ -12,7 +12,7 @@ public class Ball : MonoBehaviourPunCallbacks {
     float _boundDistance = 0.5f;
     [SerializeField] float _xSpeed = -1.5f/60f;
     [SerializeField] float _ySpeed = -1.5f/60f;
-    bool isShifting = true;
+    bool _isShifting = true;
 
     // Reference to the object to follow
     [SerializeField] GameObject target;
@@ -36,12 +36,12 @@ public class Ball : MonoBehaviourPunCallbacks {
         // just bounced off enemy paddle and needs to catch up to other player position
         if (KGameController.instance.isHeadingTowardsMe)
         {
-            if (isShifting)
+            if (_isShifting)
             {
                 DisplaceBall(_xSpeed*1.5f, _ySpeed*1.5f);
                 if (GetDistanceFromTarget() > _boundDistance)
                 {
-                    isShifting = false;
+                    _isShifting = false;
                 }
             }
             else
@@ -51,12 +51,12 @@ public class Ball : MonoBehaviourPunCallbacks {
         }
         else
         {
-            if (isShifting)
+            if (_isShifting)
             {
                 DisplaceBall(_xSpeed*.8f, _ySpeed*.8f);
                 if (GetDistanceFromTarget() < 0.045)
                 {
-                    isShifting = false;
+                    _isShifting = false;
                 }
             }
             else
@@ -79,7 +79,7 @@ public class Ball : MonoBehaviourPunCallbacks {
             Debug.Log("paddle speed before: " + _ySpeed);
             // Debug.Log("paddle: " + transform.position.ToString("F3"));
             ToggleIsHeadingTowardsMe();
-            isShifting = true;
+            _isShifting = true;
             _ySpeed = _ySpeed * -1f;
             Debug.Log("paddle speed after: " + _ySpeed);
         }
@@ -93,7 +93,7 @@ public class Ball : MonoBehaviourPunCallbacks {
             if (!KGameController.instance.isHeadingTowardsMe) //opposite player hits
             {
                 ToggleIsHeadingTowardsMe();
-                isShifting = true;
+                _isShifting = true;
                 _ySpeed = _ySpeed * -1f;
             }
             return;

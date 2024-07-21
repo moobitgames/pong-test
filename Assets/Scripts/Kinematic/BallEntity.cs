@@ -6,9 +6,9 @@ using Hashtable = ExitGames.Client.Photon.Hashtable;
 public class BallEntity : MonoBehaviourPunCallbacks {
 
     // Object state properties
-    float xSpeed = -1.2f/60f;
-    float ySpeed = -1.2f/60f;
-    [SerializeField] Ball target; // Ball that this entity is tracking
+    float _xSpeed = -1.2f/60f;
+    float _ySpeed = -1.2f/60f;
+    [SerializeField] Ball _target; // Ball that this entity is tracking
     // private bool isStartingFromRest = true;
     
     void Start()
@@ -28,7 +28,7 @@ public class BallEntity : MonoBehaviourPunCallbacks {
     // * and acts as the source of truth for where an idealized ball should be
     void SimpleMoveBall()
     {
-        DisplaceBall(xSpeed, ySpeed);
+        DisplaceBall(_xSpeed, _ySpeed);
     }
 
     void DisplaceBall(float x, float y) 
@@ -46,12 +46,12 @@ public class BallEntity : MonoBehaviourPunCallbacks {
     {
         if(other.tag == "EndZoneWallPanel")
         {
-            ySpeed = ySpeed * -1f;
+            _ySpeed = _ySpeed * -1f;
             CourseCorrect();
         }
         else if(other.tag == "SideWallPanel")
         {
-            xSpeed = xSpeed * -1f;
+            _xSpeed = _xSpeed * -1f;
             CourseCorrect();
         }
         else
@@ -69,8 +69,8 @@ public class BallEntity : MonoBehaviourPunCallbacks {
         float distance = GetDistanceFromTarget();
         float degrees = 45f;
         float angle = (degrees * Mathf.PI) / 180f;
-        float xMagnitude = distance * Mathf.Cos(angle) * Mathf.Sign(xSpeed);
-        float yMagnitude = distance * Mathf.Sin(angle) * Mathf.Sign(ySpeed);
+        float xMagnitude = distance * Mathf.Cos(angle) * Mathf.Sign(_xSpeed);
+        float yMagnitude = distance * Mathf.Sin(angle) * Mathf.Sign(_ySpeed);
         float newX = this.transform.position.x + xMagnitude;
         float newY = this.transform.position.y + yMagnitude;
 
@@ -83,21 +83,21 @@ public class BallEntity : MonoBehaviourPunCallbacks {
         if (inBounds)
         {
             // set position
-            target.SetPosition(newX, newY);
+            _target.SetPosition(newX, newY);
             // set direction/speed
-            target.SetVelocity(xSpeed, ySpeed);
+            _target.SetVelocity(_xSpeed, _ySpeed);
         }
     }
 
     public float GetDistanceFromTarget()
     {
-        return Vector3.Distance(transform.position, target.transform.position);
+        return Vector3.Distance(transform.position, _target.transform.position);
     }
 
     public void SetVelocity(float x, float y)
     {
-        xSpeed = x;
-        ySpeed = y;
+        _xSpeed = x;
+        _ySpeed = y;
     }
 
     public void SetPosition(float x, float y)

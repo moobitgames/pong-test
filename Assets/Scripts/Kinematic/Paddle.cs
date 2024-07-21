@@ -4,17 +4,17 @@ using Photon.Pun;
 
 public class Paddle : MonoBehaviour
 {
-    public string leftKey, rightKey;
-    public float speed;
-    private float maxRange;
-    private PhotonView myPV;
+    public string _leftKey, _rightKey;
+    public float _speed;
+    private float _maxRange;
+    private PhotonView _myPV;
 
     // Use this for initialization
     private void Start(){
-        myPV = GetComponent<PhotonView>();
-        if(myPV.IsMine){
+        _myPV = GetComponent<PhotonView>();
+        if(_myPV.IsMine){
             Camera.main.transform.rotation = transform.rotation;
-            myPV.RPC("RPC_SendName",RpcTarget.OthersBuffered,PhotonNetwork.NickName);
+            _myPV.RPC("RPC_SendName",RpcTarget.OthersBuffered,PhotonNetwork.NickName);
         }
     }
 
@@ -27,7 +27,7 @@ public class Paddle : MonoBehaviour
     // Update is called once per frame, only move if player is the owner
     void Update()
     {
-        if (myPV.IsMine){
+        if (_myPV.IsMine){
             MovePaddle();
         }
     }
@@ -35,15 +35,15 @@ public class Paddle : MonoBehaviour
     void MovePaddle()
     {
         Vector3 old = transform.position;
-        if(Input.GetKey(leftKey)){
-            transform.Translate(Vector3.left * Time.deltaTime * speed, Space.Self);
+        if(Input.GetKey(_leftKey)){
+            transform.Translate(Vector3.left * Time.deltaTime * _speed, Space.Self);
         }
-        if(Input.GetKey(rightKey)){
-            transform.Translate(Vector3.right * Time.deltaTime * speed, Space.Self);
+        if(Input.GetKey(_rightKey)){
+            transform.Translate(Vector3.right * Time.deltaTime * _speed, Space.Self);
         }
 
         // TODO: refactor so it just returns automatically instead of moving then recorrecting
-        if(transform.position.x< - 1* maxRange||transform.position.x > maxRange){
+        if(transform.position.x< - 1* _maxRange||transform.position.x > _maxRange){
             transform.position=old;
         }
     }
