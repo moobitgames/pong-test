@@ -1191,10 +1191,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
 <<<<<<< HEAD
+<<<<<<< HEAD
   _target: {fileID: 1469507653}
 =======
   startxSpeed: -0.005
   startySpeed: -0.005
+=======
+  startxSpeed: -0.001
+  startySpeed: -0.001
+>>>>>>> a7688f6 (start)
   target: {fileID: 1469507653}
 >>>>>>> dc54eeb (fixed velocity)
 --- !u!114 &867871405
