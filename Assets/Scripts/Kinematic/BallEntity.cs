@@ -6,13 +6,17 @@ using Hashtable = ExitGames.Client.Photon.Hashtable;
 public class BallEntity : MonoBehaviourPunCallbacks {
 
     // Object state properties
-    float _xSpeed = -1.2f/60f;
-    float _ySpeed = -1.2f/60f;
+    [SerializeField] public float _startxSpeed = -1.2f/60f;
+    [SerializeField] public float _startySpeed = -1.2f/60f;
     [SerializeField] Ball _target; // Ball that this entity is tracking
-    // private bool isStartingFromRest = true;
+
+    float _xSpeed;
+    float _ySpeed;
+
     
-    void Start()
-    {
+    void Start(){
+        _xSpeed=_startxSpeed;
+        _ySpeed=_startySpeed;
     }
     
     void Update () {
@@ -66,6 +70,7 @@ public class BallEntity : MonoBehaviourPunCallbacks {
     // TODO: implement ray casting to account for when projected posistion is in opposite direction
     public void CourseCorrect()
     {
+        Debug.Log("CourseCorrect");
         float distance = GetDistanceFromTarget();
         float degrees = 45f;
         float angle = (degrees * Mathf.PI) / 180f;
@@ -92,6 +97,11 @@ public class BallEntity : MonoBehaviourPunCallbacks {
     public float GetDistanceFromTarget()
     {
         return Vector3.Distance(transform.position, _target.transform.position);
+    }
+
+    public void SetVelocity(){
+        _xSpeed=_startxSpeed;
+        _ySpeed=_startySpeed;
     }
 
     public void SetVelocity(float x, float y)

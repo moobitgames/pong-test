@@ -105,6 +105,7 @@ public class KGameController : MonoBehaviourPunCallbacks {
         // 2. clear player score, ball and paddle positions, lastKnownPositions
         // 3. set player name?
         // 4. initialize ball positions based on where ball object was placed?
+
         _gameOverPanel.SetActive(false); //! move to text component?
         _ball.SetPosition(_originX, _originY);
         _ballEntity.SetPosition(_originX, _originY);
@@ -181,6 +182,7 @@ public class KGameController : MonoBehaviourPunCallbacks {
     public void StartRound()
     {
         _isRoundInProgress = true;
+
     }
 
     // * DOC:
