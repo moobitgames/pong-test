@@ -1,5 +1,7 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using Photon.Pun;
 using Hashtable = ExitGames.Client.Photon.Hashtable;    
 
@@ -13,7 +15,9 @@ public class BallEntity : MonoBehaviourPunCallbacks {
     float _xSpeed;
     float _ySpeed;
 
-    
+    List<float> _bouncesX= new List<float>();
+    List<float> _bouncesY= new List<float>();
+
     void Start(){
         _xSpeed=_startxSpeed;
         _ySpeed=_startySpeed;
@@ -41,27 +45,55 @@ public class BallEntity : MonoBehaviourPunCallbacks {
         transform.position = transform.position += displacement;
     }
     
+
+    [PunRPC]
+    void RPC_InformBounce(float x,float y){
+        if(KGameController.instance._isMasterClient){
+            return;
+        }else{
+            _bouncesX.Add(x);
+            _bouncesY.Add(y);
+            CourseCorrect();
+        }
+
+    }
+
     // * DOC:
     // * BallEntity should only bounce off of SideWallPanels and EndZoneWallPanels
     // * Until it gets an rpc saying other wise, it continues to move as if in
     // * a perfect match with no misses. Upon bouncing it corrects the position of
-    // * the visible ball
+    // * the visible balls
     void OnTriggerEnter2D(Collider2D other)
     {
+        if(!KGameController.instance._isMasterClient){
+            return;
+        }
+        float x=transform.position.x;
+        float y=transform.position.y;
         if(other.tag == "EndZoneWallPanel")
         {
             _ySpeed = _ySpeed * -1f;
+            _bouncesX.Add(x);
+            _bouncesY.Add(y);
             CourseCorrect();
+            //KGameController.instance.photonView.RPC("RPC_InformBounce",PhotonNetwork.PlayerListOthers[0], (x,y));
+
         }
         else if(other.tag == "SideWallPanel")
         {
             _xSpeed = _xSpeed * -1f;
+            _bouncesX.Add(x);
+            _bouncesY.Add(y);
             CourseCorrect();
+            //KGameController.instance.photonView.RPC("RPC_InformBounce",PhotonNetwork.PlayerListOthers[0], (x,y));
+
         }
         else
         {
             return;
         }
+        Debug.Log(_bouncesX.Last().ToString()+_bouncesY.Last().ToString());
+        return;
     }
 
     // * DOC:

@@ -1190,18 +1190,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab4978a299cfb4c4685a4737f3096823, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-<<<<<<< HEAD
-<<<<<<< HEAD
+  _startxSpeed: -0.01
+  _startySpeed: -0.01
   _target: {fileID: 1469507653}
-=======
-  startxSpeed: -0.005
-  startySpeed: -0.005
-=======
-  startxSpeed: -0.001
-  startySpeed: -0.001
->>>>>>> a7688f6 (start)
-  target: {fileID: 1469507653}
->>>>>>> dc54eeb (fixed velocity)
 --- !u!114 &867871405
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2005,15 +1996,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f47bc76b1d55546eda3030af4b575f3b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-<<<<<<< HEAD
   _speedUp: 0
-  _xSpeed: -0.025
-  _ySpeed: -0.025
-  target: {fileID: 867871403}
-=======
-  speedUp: 0
   target: {fileID: 867871404}
->>>>>>> dc54eeb (fixed velocity)
 --- !u!1 &1526930327
 GameObject:
   m_ObjectHideFlags: 0
@@ -2085,7 +2069,7 @@ MonoBehaviour:
   _ball: {fileID: 1469507653}
   _ballEntity: {fileID: 867871404}
   _endZoneWallPanelOne: {fileID: 2125563902}
-  _endZoneWallPanelTwo: {fileID: 0}
+  _endZoneWallPanelTwo: {fileID: 1306081365}
 --- !u!4 &1526930330
 Transform:
   m_ObjectHideFlags: 0

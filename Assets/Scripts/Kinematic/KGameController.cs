@@ -38,7 +38,7 @@ public class KGameController : MonoBehaviourPunCallbacks {
         [SerializeField] Text _theirName;        
 
     // Game world objects
-        private static Player other;
+        public static Player other;
         
         [SerializeField] Ball _ball;
         [SerializeField] BallEntity _ballEntity;

@@ -9,18 +9,10 @@ public class Ball : MonoBehaviourPunCallbacks {
     // Object state properties
     [SerializeField] float _speedUp;
     
-<<<<<<< HEAD
     float _boundDistance = 0.5f;
     bool _isShifting = true;
     float _xSpeed;
     float _ySpeed;
-=======
-    float boundDistance = 0.5f;
-    float xSpeed;
-    float ySpeed;
-    bool isShifting = true;
->>>>>>> a7688f6 (start)
-
     // Reference to the object to follow
     [SerializeField] BallEntity target;
 
