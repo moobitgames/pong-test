@@ -76,7 +76,7 @@ public class BallEntity : MonoBehaviourPunCallbacks {
             _bouncesX.Add(x);
             _bouncesY.Add(y);
             CourseCorrect();
-            //KGameController.instance.photonView.RPC("RPC_InformBounce",PhotonNetwork.PlayerListOthers[0], (x,y));
+            KGameController.instance.photonView.RPC("RPC_InformBounce",PhotonNetwork.PlayerListOthers[0], (x,y));
 
         }
         else if(other.tag == "SideWallPanel")
@@ -85,7 +85,7 @@ public class BallEntity : MonoBehaviourPunCallbacks {
             _bouncesX.Add(x);
             _bouncesY.Add(y);
             CourseCorrect();
-            //KGameController.instance.photonView.RPC("RPC_InformBounce",PhotonNetwork.PlayerListOthers[0], (x,y));
+            KGameController.instance.photonView.RPC("RPC_InformBounce",PhotonNetwork.PlayerListOthers[0], (x,y));
 
         }
         else
