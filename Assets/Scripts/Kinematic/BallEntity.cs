@@ -122,7 +122,7 @@ public class BallEntity : MonoBehaviourPunCallbacks {
             // set position
             _target.SetPosition(newX, newY);
             // set direction/speed
-            _target.SetVelocity(_xSpeed, _ySpeed);
+            //_target.SetVelocity(_xSpeed, _ySpeed);
         }
     }
 
