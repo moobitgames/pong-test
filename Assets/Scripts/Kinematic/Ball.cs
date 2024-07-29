@@ -10,7 +10,7 @@ public class Ball : MonoBehaviourPunCallbacks {
     [SerializeField] float _speedUp;
     
     float _boundDistance = 0.5f;
-    bool _isShifting = true;
+    public bool _isShifting = false;
     float _xSpeed;
     float _ySpeed;
     // Reference to the object to follow
@@ -152,10 +152,19 @@ public class Ball : MonoBehaviourPunCallbacks {
         return Vector3.Distance(transform.position, target.transform.position);
     }
 
+    public void SetVelocity()
+    {
+        _xSpeed = target._startxSpeed;
+       _ySpeed = target._startySpeed;
+
+    }
+
+
     public void SetVelocity(float x, float y)
     {
         _xSpeed = x;
-        _ySpeed = y;
+       _ySpeed = y;
+
     }
 
     public void SetPosition(float x, float y)
