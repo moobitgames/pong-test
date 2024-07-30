@@ -16,7 +16,7 @@ public class KGameController : MonoBehaviourPunCallbacks {
         public bool _isGameOver = false;
         public bool _isTurnToServe = false; // whether something happens if user presses space, initially true if master
         public bool _isRoundInProgress = false; // whether ball is moving
-        public bool _isHeadingTowardsMe = true; // initially true if master
+        public bool _isHeadingTowardsMe = false; // initially false, set true when serving.
         public bool _isBEHeadingTowardsMe = true; // initially true if master
         private int _pingCounter;
         private bool _debuggingEndPanel = false;
@@ -38,7 +38,7 @@ public class KGameController : MonoBehaviourPunCallbacks {
         [SerializeField] Text _theirName;        
 
     // Game world objects
-        private static Player other;
+        public static Player other;
         
         [SerializeField] Ball _ball;
         [SerializeField] BallEntity _ballEntity;
@@ -105,6 +105,7 @@ public class KGameController : MonoBehaviourPunCallbacks {
         // 2. clear player score, ball and paddle positions, lastKnownPositions
         // 3. set player name?
         // 4. initialize ball positions based on where ball object was placed?
+
         _gameOverPanel.SetActive(false); //! move to text component?
         _ball.SetPosition(_originX, _originY);
         _ballEntity.SetPosition(_originX, _originY);
@@ -159,6 +160,8 @@ public class KGameController : MonoBehaviourPunCallbacks {
             if (!_isGameOver && !_isRoundInProgress && _isTurnToServe)
             {
                 this.photonView.RPC("RPC_SpacePressed", other);
+                this._isHeadingTowardsMe=true;
+                this._ball._isShifting=true;
                 StartRound();
             }
         }
@@ -181,6 +184,9 @@ public class KGameController : MonoBehaviourPunCallbacks {
     public void StartRound()
     {
         _isRoundInProgress = true;
+        _ball.SetVelocity();
+        _ballEntity.SetVelocity();
+
     }
 
     // * DOC:

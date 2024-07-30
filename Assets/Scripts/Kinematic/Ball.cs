@@ -10,17 +10,17 @@ public class Ball : MonoBehaviourPunCallbacks {
     [SerializeField] float _speedUp;
     
     float _boundDistance = 0.5f;
-    [SerializeField] float _xSpeed = -1.5f/60f;
-    [SerializeField] float _ySpeed = -1.5f/60f;
-    bool _isShifting = true;
-
+    public bool _isShifting = false;
+    float _xSpeed;
+    float _ySpeed;
     // Reference to the object to follow
-    [SerializeField] GameObject target;
+    [SerializeField] BallEntity target;
 
     void Start()
     {
-        _xSpeed = -1.5f/60f;
-        _ySpeed = -1.5f/60f;
+
+       _xSpeed = target._startxSpeed;
+       _ySpeed = target._startySpeed;
     }
     
     void FixedUpdate() {
@@ -29,6 +29,7 @@ public class Ball : MonoBehaviourPunCallbacks {
         {
             SimpleMoveBall();
         }
+        
     }
 
     void SimpleMoveBall()
@@ -151,14 +152,29 @@ public class Ball : MonoBehaviourPunCallbacks {
         return Vector3.Distance(transform.position, target.transform.position);
     }
 
+    public void SetVelocity()
+    {
+        _xSpeed = target._startxSpeed;
+       _ySpeed = target._startySpeed;
+
+    }
+
+
     public void SetVelocity(float x, float y)
     {
         _xSpeed = x;
-        _ySpeed = y;
+       _ySpeed = y;
+
     }
 
     public void SetPosition(float x, float y)
     {
         this.transform.position = new Vector3(x, y, -1); 
+    }
+
+    public void reset(){
+        _xSpeed = target._startxSpeed;
+        _ySpeed = target._startySpeed;
+        Debug.Log("Reset");
     }
 }

@@ -1,18 +1,26 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using Photon.Pun;
 using Hashtable = ExitGames.Client.Photon.Hashtable;    
 
 public class BallEntity : MonoBehaviourPunCallbacks {
 
     // Object state properties
-    float _xSpeed = -1.2f/60f;
-    float _ySpeed = -1.2f/60f;
+    [SerializeField] public float _startxSpeed = -1.2f/60f;
+    [SerializeField] public float _startySpeed = -1.2f/60f;
     [SerializeField] Ball _target; // Ball that this entity is tracking
-    // private bool isStartingFromRest = true;
-    
-    void Start()
-    {
+
+    float _xSpeed;
+    float _ySpeed;
+
+    List<float> _bouncesX= new List<float>();
+    List<float> _bouncesY= new List<float>();
+
+    void Start(){
+        _xSpeed=_startxSpeed;
+        _ySpeed=_startySpeed;
     }
     
     void FixedUpdate () {
@@ -37,27 +45,55 @@ public class BallEntity : MonoBehaviourPunCallbacks {
         transform.position = transform.position += displacement;
     }
     
+
+    [PunRPC]
+    void RPC_InformBounce(float x,float y){
+        if(KGameController.instance._isMasterClient){
+            return;
+        }else{
+            _bouncesX.Add(x);
+            _bouncesY.Add(y);
+            CourseCorrect();
+        }
+
+    }
+
     // * DOC:
     // * BallEntity should only bounce off of SideWallPanels and EndZoneWallPanels
     // * Until it gets an rpc saying other wise, it continues to move as if in
     // * a perfect match with no misses. Upon bouncing it corrects the position of
-    // * the visible ball
+    // * the visible balls
     void OnTriggerEnter2D(Collider2D other)
     {
+        if(!KGameController.instance._isMasterClient){
+            return;
+        }
+        float x=transform.position.x;
+        float y=transform.position.y;
         if(other.tag == "EndZoneWallPanel")
         {
             _ySpeed = _ySpeed * -1f;
+            _bouncesX.Add(x);
+            _bouncesY.Add(y);
             CourseCorrect();
+            KGameController.instance.photonView.RPC("RPC_InformBounce",PhotonNetwork.PlayerListOthers[0], (x,y));
+
         }
         else if(other.tag == "SideWallPanel")
         {
             _xSpeed = _xSpeed * -1f;
+            _bouncesX.Add(x);
+            _bouncesY.Add(y);
             CourseCorrect();
+            KGameController.instance.photonView.RPC("RPC_InformBounce",PhotonNetwork.PlayerListOthers[0], (x,y));
+
         }
         else
         {
             return;
         }
+        Debug.Log(_bouncesX.Last().ToString()+_bouncesY.Last().ToString());
+        return;
     }
 
     // * DOC:
@@ -66,6 +102,7 @@ public class BallEntity : MonoBehaviourPunCallbacks {
     // TODO: implement ray casting to account for when projected posistion is in opposite direction
     public void CourseCorrect()
     {
+        Debug.Log("CourseCorrect");
         float distance = GetDistanceFromTarget();
         float degrees = 45f;
         float angle = (degrees * Mathf.PI) / 180f;
@@ -85,13 +122,18 @@ public class BallEntity : MonoBehaviourPunCallbacks {
             // set position
             _target.SetPosition(newX, newY);
             // set direction/speed
-            _target.SetVelocity(_xSpeed, _ySpeed);
+            //_target.SetVelocity(_xSpeed, _ySpeed);
         }
     }
 
     public float GetDistanceFromTarget()
     {
         return Vector3.Distance(transform.position, _target.transform.position);
+    }
+
+    public void SetVelocity(){
+        _xSpeed=_startxSpeed;
+        _ySpeed=_startySpeed;
     }
 
     public void SetVelocity(float x, float y)
