@@ -23,7 +23,7 @@ public class Ball : MonoBehaviourPunCallbacks {
         _ySpeed = -1.5f/60f;
     }
     
-    void Update() {
+    void FixedUpdate() {
         // if game round is active, move ball
         if(KGameController.instance._isRoundInProgress)
         {
