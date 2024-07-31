@@ -10,17 +10,17 @@ public class Ball : MonoBehaviourPunCallbacks {
     [SerializeField] float _speedUp;
     
     float _boundDistance = 0.5f;
-    [SerializeField] float _xSpeed = -1.5f/60f;
-    [SerializeField] float _ySpeed = -1.5f/60f;
     bool _isShifting = true;
-
+    float _xSpeed;
+    float _ySpeed;
     // Reference to the object to follow
-    [SerializeField] GameObject target;
+    [SerializeField] BallEntity target;
 
     void Start()
     {
-        _xSpeed = -1.5f/60f;
-        _ySpeed = -1.5f/60f;
+
+       _xSpeed = target._startXSpeed;
+       _ySpeed = target._startYSpeed;
     }
     
     void FixedUpdate() {
@@ -29,6 +29,7 @@ public class Ball : MonoBehaviourPunCallbacks {
         {
             SimpleMoveBall();
         }
+        
     }
 
     void SimpleMoveBall()
@@ -76,12 +77,9 @@ public class Ball : MonoBehaviourPunCallbacks {
     {
         if(other.tag == "Paddle")
         {
-            Debug.Log("paddle speed before: " + _ySpeed);
-            // Debug.Log("paddle: " + transform.position.ToString("F3"));
             ToggleIsHeadingTowardsMe();
             _isShifting = true;
             _ySpeed = _ySpeed * -1f;
-            Debug.Log("paddle speed after: " + _ySpeed);
         }
         else if(other.tag == "NotificationZone" && KGameController.instance._isHeadingTowardsMe)
         {
@@ -100,7 +98,6 @@ public class Ball : MonoBehaviourPunCallbacks {
         }
         else if(other.tag == "SideWallPanel")
         {
-            Debug.Log("sidewallpanel: " + transform.position.ToString("F3"));
             _xSpeed = _xSpeed * -1;
         }
         else if(other.tag == "EndTwo")
@@ -160,5 +157,10 @@ public class Ball : MonoBehaviourPunCallbacks {
     public void SetPosition(float x, float y)
     {
         this.transform.position = new Vector3(x, y, -1); 
+    }
+
+    public void reset(){
+        _xSpeed = target._startXSpeed;
+        _ySpeed = target._startYSpeed;
     }
 }
