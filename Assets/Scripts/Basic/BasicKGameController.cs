@@ -4,22 +4,27 @@ using UnityEngine.SceneManagement;
 using Photon.Pun;
 using Photon.Realtime;
 using Hashtable = ExitGames.Client.Photon.Hashtable;    
-
+using System.Collections.Generic; 
 
 public class BasicKGameController : MonoBehaviourPunCallbacks {
 
     public static BasicKGameController instance;
 
     // Game state
-        public int _scoreOne = 0;
-        public int _scoreTwo = 0;
+        // public int _scoreOne = 0; remove
+        // public int _scoreTwo = 0; remove
+        public Dictionary<string, int> _playerIdToScore = new Dictionary();
+        //  PhotonNetwork.LocalPlayer.CustomProperties["Score"] make hleper function
+
+        private static Player _otherPlayer;
+        private static Player _selfPlayer;
+
         public bool _isGameOver = false;
         public bool _isTurnToServe = false; // whether something happens if user presses space, initially true if master
+        // rely on playerid 
         public bool _isRoundInProgress = false; // whether ball is moving
-        public bool _isHeadingTowardsMe = true; // initially true if master
-        public bool _isBEHeadingTowardsMe = true; // initially true if master
-        private int _pingCounter;
-        public bool _isMasterClient = false;
+
+        private int _pingCounter; // TODO: kz clean up
 
     // Settings
         [SerializeField] int _scoreToWin = 3;
@@ -48,6 +53,7 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
 
     private void Start(){
         // set player name
+        _selfPlayer=PhotonNetwork.LocalPlayer;
         _myName.text=PhotonNetwork.NickName;
         _logPanel = _debugPanel.GetComponent<MessagePanelController>();
 
@@ -73,7 +79,7 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
 
     // might not be needed
     public void SetTheirName(string nameIn){
-        _theirName.text=nameIn;
+        _theirName.text=_otherPlayer.NickName;
     }
 
     public override void OnEnable()
@@ -84,7 +90,7 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
     }
 
     public override void OnPlayerEnteredRoom(Player newPlayer){
-        other=newPlayer;
+        _otherPlayer=newPlayer;
     }
 
     public override void OnJoinedRoom(){
@@ -120,8 +126,6 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
 
         _isGameOver = false;
         _isTurnToServe = PhotonNetwork.IsMasterClient;
-        _isMasterClient = PhotonNetwork.IsMasterClient;
-        _isHeadingTowardsMe = PhotonNetwork.IsMasterClient;
         _isRoundInProgress = false;
         ResetRound();
     }
@@ -217,11 +221,6 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
         _logPanel.LogValue("Other wall panel", status.ToString());
     }
 
-    public void ToggleIsHeadingTowardsMe()
-    {
-        _isHeadingTowardsMe = !_isHeadingTowardsMe;
-    }
-    
     //TODO remove references to player 1 and 2
     public void GivePointToPlayerOne()
     {
@@ -230,15 +229,6 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
         if(_scoreOne >= _scoreToWin)
         {
             DeclareWinner(instance._myName.text);
-        }
-        // flip _isTurnToServe if necessary
-        if (_isMasterClient)
-        {
-            _isTurnToServe = false;
-            _isHeadingTowardsMe = false;
-        } else {
-            _isTurnToServe = true;
-            _isHeadingTowardsMe = true;
         }
         ResetRound();
     }
@@ -255,11 +245,9 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
         if (PhotonNetwork.IsMasterClient)
         {
             _isTurnToServe = true;
-            _isHeadingTowardsMe = true;
         } else
         {
             _isTurnToServe = false;
-            _isHeadingTowardsMe = false;
         }
         ResetRound();
     }
