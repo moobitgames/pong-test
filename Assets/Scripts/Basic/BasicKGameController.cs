@@ -19,7 +19,6 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
         public bool _isHeadingTowardsMe = true; // initially true if master
         public bool _isBEHeadingTowardsMe = true; // initially true if master
         private int _pingCounter;
-        private bool _debuggingEndPanel = false;
         public bool _isMasterClient = false;
 
     // Settings
@@ -31,6 +30,7 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
         public Text _textOne;
         public Text _textTwo;
         [SerializeField] GameObject _debugPanel;
+        [SerializeField] bool _debugEnableWallPanel = false;
         MessagePanelController _logPanel;
         [SerializeField] GameObject _gameOverPanel;
         [SerializeField] Text _winnerText;
@@ -40,8 +40,7 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
     // Game world objects
         private static Player other;
         
-        [SerializeField] Ball _ball;
-        [SerializeField] BallEntity _ballEntity;
+        [SerializeField] BasicBallEntity _ballEntity;
         [SerializeField] GameObject _endZoneWallPanelOne;
         [SerializeField] GameObject _endZoneWallPanelTwo;
         private GameObject _otherPlayerWallPanel;
@@ -61,6 +60,15 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
             _myWallPanel = _endZoneWallPanelOne;
         }
         GameReset();
+        if (_debugEnableWallPanel)
+        {
+            _endZoneWallPanelOne.SetActive(true);
+            _endZoneWallPanelTwo.SetActive(true);
+        } else
+        {
+            _endZoneWallPanelOne.SetActive(false);
+            _endZoneWallPanelTwo.SetActive(false);
+        }
     }
 
     // might not be needed
@@ -106,7 +114,6 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
         // 3. set player name?
         // 4. initialize ball positions based on where ball object was placed?
         _gameOverPanel.SetActive(false); //! move to text component?
-        _ball.SetPosition(_originX, _originY);
         _ballEntity.SetPosition(_originX, _originY);
         _scoreOne = 0;
         _scoreTwo = 0;
@@ -213,9 +220,6 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
     public void ToggleIsHeadingTowardsMe()
     {
         _isHeadingTowardsMe = !_isHeadingTowardsMe;
-        if (!_debuggingEndPanel) {
-            return;
-        }
     }
     
     //TODO remove references to player 1 and 2
@@ -270,7 +274,6 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
     //TODO remove references to player 1 and 2
     public void ResetBall()
     {
-        _ball.SetPosition(_originX, _originY);
         _ballEntity.SetPosition(_originX, _originY);
         _isRoundInProgress = false;
     }
