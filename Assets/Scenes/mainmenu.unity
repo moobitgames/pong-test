@@ -601,6 +601,11 @@ PrefabInstance:
       propertyPath: m_Text
       value: Moobit Pong
       objectReference: {fileID: 0}
+    - target: {fileID: 5898591737807816491, guid: 9ea8b24e184253f4dae2ce4e156e9b05,
+        type: 3}
+      propertyPath: multiplayerSceneIndex
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 6061704174720893852, guid: 9ea8b24e184253f4dae2ce4e156e9b05,
         type: 3}
       propertyPath: m_RootOrder
@@ -3899,10 +3904,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   settingMenu: {fileID: 1216990212}
   regionSelect: {fileID: 1628579320}
-  playerName: 
-  roomName: 
-  regionString: 
-  musicVolume: 5
+  lobbyController: {fileID: 0}
 --- !u!4 &1011775219
 Transform:
   m_ObjectHideFlags: 0

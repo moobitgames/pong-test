@@ -31,7 +31,6 @@ public class MMController : MonoBehaviour
 
     public void Play()
     {
-        Debug.Log("asdfasdf");
         SceneManager.LoadScene(2);
     }
 

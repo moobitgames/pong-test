@@ -14,4 +14,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/kinematicscene.unity
     guid: 380d3f7271bca46c38d7033172b7a381
+  - enabled: 1
+    path: Assets/Scenes/basickinematicscene.unity
+    guid: 9c008bd65cd1f4798a0652f595009060
   m_configObjects: {}
