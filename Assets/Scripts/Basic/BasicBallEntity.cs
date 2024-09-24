@@ -42,13 +42,27 @@ public class BasicBallEntity : MonoBehaviourPunCallbacks {
     // * the visible ball
     void OnTriggerEnter2D(Collider2D other)
     {
-        if(other.tag == "EndZoneWallPanel")
+        if(other.tag == "Paddle")
+        {
+            _yVelocity = _yVelocity * -1f;
+        }
+        else if(other.tag == "EndZoneWallPanel")
         {
             _yVelocity = _yVelocity * -1f;
         }
         else if(other.tag == "SideWallPanel")
         {
             _xVelocity = _xVelocity * -1f;
+        }
+        else if(other.tag == "EndTwo")
+        {
+            // player one scores
+            BasicKGameController.instance.GivePointToPlayerOne();
+        }
+        else if(other.tag == "EndOne")
+        {
+            // player two scores
+            BasicKGameController.instance.GivePointToPlayerTwo();
         }
         else
         {
