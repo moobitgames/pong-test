@@ -11,13 +11,14 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
     public static BasicKGameController instance;
 
     // Game state
-        // public int _scoreOne = 0; remove
-        // public int _scoreTwo = 0; remove
-        public Dictionary<string, int> _playerIdToScore = new Dictionary();
-        //  PhotonNetwork.LocalPlayer.CustomProperties["Score"] make hleper function
+        public int _scoreOne = 0; // remove
+        public int _scoreTwo = 0; // remove
+        public Dictionary<string, int> _playerIdToScore = new Dictionary<string, int>();
+        //  PhotonNetwork.LocalPlayer.CustomProperties["Score"] make helper function
 
         private static Player _otherPlayer;
-        private static Player _selfPlayer;
+        private static Player _localPlayer;
+        public bool _isMasterClient = false;
 
         public bool _isGameOver = false;
         public bool _isTurnToServe = false; // whether something happens if user presses space, initially true if master
@@ -39,6 +40,7 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
         MessagePanelController _logPanel;
         [SerializeField] GameObject _gameOverPanel;
         [SerializeField] Text _winnerText;
+        [SerializeField] Text _myNanerText;
         [SerializeField] Text _myName;
         [SerializeField] Text _theirName;        
 
@@ -52,20 +54,17 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
         private GameObject _myWallPanel;
 
     private void Start(){
+        // set local Photon Player
+        _localPlayer=PhotonNetwork.LocalPlayer; 
         // set player name
-        _selfPlayer=PhotonNetwork.LocalPlayer;
         _myName.text=PhotonNetwork.NickName;
+        // set player score
+        SetLocalPlayerScore(0);
+
+        // instantiate debugger pannel
         _logPanel = _debugPanel.GetComponent<MessagePanelController>();
 
-        if (PhotonNetwork.PlayerListOthers.Length>0){
-            _otherPlayerWallPanel = _endZoneWallPanelOne;
-            _myWallPanel = _endZoneWallPanelTwo;
-        } else 
-        {
-            _otherPlayerWallPanel = _endZoneWallPanelTwo;
-            _myWallPanel = _endZoneWallPanelOne;
-        }
-        GameReset();
+        // deactivate/activate wall panels
         if (_debugEnableWallPanel)
         {
             _endZoneWallPanelOne.SetActive(true);
@@ -75,6 +74,19 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
             _endZoneWallPanelOne.SetActive(false);
             _endZoneWallPanelTwo.SetActive(false);
         }
+
+        // TODO: make player agnostic
+        if (PhotonNetwork.PlayerListOthers.Length>0){
+            _otherPlayerWallPanel = _endZoneWallPanelOne;
+            _myWallPanel = _endZoneWallPanelTwo;
+        } else 
+        {
+            _otherPlayerWallPanel = _endZoneWallPanelTwo;
+            _myWallPanel = _endZoneWallPanelOne;
+        }
+
+        // reset game
+        ResetGame();
     }
 
     // might not be needed
@@ -104,16 +116,18 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
             _otherPlayerWallPanel = _endZoneWallPanelTwo;
             _myWallPanel = _endZoneWallPanelOne;
         }
+        // TODO: what if old user rejoins room?
+        SetLocalPlayerScore(0);
     }
 
     public override void OnPlayerLeftRoom(Player otherPlayer){
         // reset game
         if(!_isGameOver){
-            GameReset();
+            ResetGame();
         }
     }
 
-    void GameReset(){
+    void ResetGame(){
         // game start: 
         // 1. clear all ui panels
         // 2. clear player score, ball and paddle positions, lastKnownPositions
@@ -121,16 +135,15 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
         // 4. initialize ball positions based on where ball object was placed?
         _gameOverPanel.SetActive(false); //! move to text component?
         _ballEntity.SetPosition(_originX, _originY);
-        _scoreOne = 0;
-        _scoreTwo = 0;
-
+        SetLocalPlayerScore(0);
         _isGameOver = false;
         _isTurnToServe = PhotonNetwork.IsMasterClient;
+        _isMasterClient = PhotonNetwork.IsMasterClient;
         _isRoundInProgress = false;
         ResetRound();
     }
 
-    private int pingCheck(Player player){
+    private int PingCheck(Player player){
         Hashtable properties = player.CustomProperties;
         int ping = PhotonNetwork.GetPing();
         if(properties.ContainsKey("Ping")){
@@ -151,10 +164,10 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
 
         // debug panel logger
         if (this._pingCounter>=60){
-            int localPing=pingCheck(PhotonNetwork.LocalPlayer);
+            int localPing=PingCheck(PhotonNetwork.LocalPlayer);
             string otherPingString="";
             if(other!=null && other.CustomProperties!=null){
-                int otherPing=pingCheck(other);
+                int otherPing=PingCheck(other);
                 otherPingString="\nPing2:"+ otherPing.ToString();
             }
             _logPanel.LogValue("Ping local", localPing.ToString());
@@ -224,9 +237,10 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
     //TODO remove references to player 1 and 2
     public void GivePointToPlayerOne()
     {
-        _scoreOne++;
+        int newScore = (int)_localPlayer.CustomProperties["score"] + 1;
+        SetLocalPlayerScore(newScore);
         this._textOne.text = _scoreOne.ToString();
-        if(_scoreOne >= _scoreToWin)
+        if(newScore >= _scoreToWin)
         {
             DeclareWinner(instance._myName.text);
         }
@@ -235,28 +249,43 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
 
     public void GivePointToPlayerTwo()
     {
-        _scoreTwo++;
-        this._textTwo.text = _scoreTwo.ToString();
-        if(_scoreTwo >= _scoreToWin)
+        //TODO AC: figure out if we need casting to int
+        int newScore = (int)_localPlayer.CustomProperties["score"] + 1;
+        //TODO AC: make this agnostic but also playable with one person in scene
+        SetLocalPlayerScore(newScore);
+        this._textTwo.text = _scoreOne.ToString();
+        if(newScore >= _scoreToWin)
         {
-            DeclareWinner(instance._theirName.text);
-        }
-        // flip _isTurnToServe if necessary
-        if (PhotonNetwork.IsMasterClient)
-        {
-            _isTurnToServe = true;
-        } else
-        {
-            _isTurnToServe = false;
+            // TODO AC : declare winner other person
         }
         ResetRound();
+    }
+
+    public void SetLocalPlayerScore(int score)
+    {
+        // TODO: move initialization to beginning
+        Hashtable props= _localPlayer.CustomProperties;
+        if(props.ContainsKey("score")){
+            props["score"]=score;
+        }else{
+            props.Add("score", score);
+        }
+        _localPlayer.SetCustomProperties(props);
+    }
+
+    public override void OnPlayerPropertiesUpdate(Player target, Hashtable changedProps)  
+    {  
+		// Debug.Log("MPLobbyPlayer: OnPlayerPropertiesUpdate() " + changedProps.ToString());  
+		if (changedProps.ContainsKey("score")) {  
+			Debug.Log("score: "+target.CustomProperties["score"]);
+		}  
     }
 
     public void ResetRound()
     {
         ResetBall();
-        SetOtherPlayerWallPanel(true);
-        SetMyWallPanel(true);
+        // SetOtherPlayerWallPanel(true);
+        // SetMyWallPanel(true);
     }
 
     //TODO remove references to player 1 and 2
