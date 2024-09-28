@@ -237,9 +237,11 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
     //TODO remove references to player 1 and 2
     public void GivePointToPlayerOne()
     {
+        Debug.Log(_localPlayer.CustomProperties["score"] );
         int newScore = (int)_localPlayer.CustomProperties["score"] + 1;
+        Debug.Log(newScore);
         SetLocalPlayerScore(newScore);
-        this._textOne.text = _scoreOne.ToString();
+        //this._textOne.text =newScore.ToString();
         if(newScore >= _scoreToWin)
         {
             DeclareWinner(instance._myName.text);
@@ -271,14 +273,19 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
             props.Add("score", score);
         }
         _localPlayer.SetCustomProperties(props);
+        //Debug.Log(_localPlayer.CustomProperties["score"] );
     }
 
     public override void OnPlayerPropertiesUpdate(Player target, Hashtable changedProps)  
     {  
-		// Debug.Log("MPLobbyPlayer: OnPlayerPropertiesUpdate() " + changedProps.ToString());  
-		if (changedProps.ContainsKey("score")) {  
-			Debug.Log("score: "+target.CustomProperties["score"]);
-		}  
+        if(!changedProps.ContainsKey("score")){
+            return;
+        }
+		if(target==_localPlayer){
+            this._textOne.text=changedProps["score"].ToString();
+        }else{
+            this._textTwo.text=changedProps["score"].ToString();
+        }
     }
 
     public void ResetRound()
