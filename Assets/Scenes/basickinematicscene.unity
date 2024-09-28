@@ -1906,19 +1906,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _scoreOne: 0
   _scoreTwo: 0
+  _isMasterClient: 0
   _isGameOver: 0
   _isTurnToServe: 0
   _isRoundInProgress: 0
-  _isHeadingTowardsMe: 1
-  _isBEHeadingTowardsMe: 1
-  _isMasterClient: 0
   _scoreToWin: 3
   _textOne: {fileID: 775687718}
   _textTwo: {fileID: 2067645372}
   _debugPanel: {fileID: 1129399693}
   _debugEnableWallPanel: 0
   _gameOverPanel: {fileID: 233732635}
-  _winnerText: {fileID: 0}
+  _winnerText: {fileID: 1034514086}
   _myName: {fileID: 1353642464}
   _theirName: {fileID: 298243360}
   _ballEntity: {fileID: 867871404}

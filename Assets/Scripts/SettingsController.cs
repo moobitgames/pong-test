@@ -57,9 +57,9 @@ public class SettingsController : MonoBehaviour
 	}
 
 	public void SetRoomName(string name){
-	// 	SettingsController.roomName = name;
-	// 	lobbyController.UpdateRoomNumber(roomName);
-	// 	Debug.Log("set room name: " + SettingsController.roomName);
+		SettingsController.roomName = name;
+		lobbyController.UpdateRoomNumber(roomName);
+		Debug.Log("set room name: " + SettingsController.roomName);
 	}
 
 	public string GetRegionString(){

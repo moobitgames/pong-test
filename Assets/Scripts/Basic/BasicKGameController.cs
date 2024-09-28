@@ -40,7 +40,6 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
         MessagePanelController _logPanel;
         [SerializeField] GameObject _gameOverPanel;
         [SerializeField] Text _winnerText;
-        [SerializeField] Text _myNanerText;
         [SerializeField] Text _myName;
         [SerializeField] Text _theirName;        
 
@@ -151,7 +150,7 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
         }else{
             properties.Add("Ping",ping);
         }
-        player.SetCustomProperties(properties);
+        //player.SetCustomProperties(properties);
         return ping;
     }
 
@@ -237,9 +236,9 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
     //TODO remove references to player 1 and 2
     public void GivePointToPlayerOne()
     {
-        Debug.Log(_localPlayer.CustomProperties["score"] );
+        Debug.Log("aaaa"+_localPlayer.CustomProperties["score"] );
         int newScore = (int)_localPlayer.CustomProperties["score"] + 1;
-        Debug.Log(newScore);
+        Debug.Log("bbbb" + newScore);
         SetLocalPlayerScore(newScore);
         //this._textOne.text =newScore.ToString();
         if(newScore >= _scoreToWin)
@@ -281,7 +280,8 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
         if(!changedProps.ContainsKey("score")){
             return;
         }
-		if(target==_localPlayer){
+		if((int)changedProps["Rot"]==0){
+            Debug.Log("cccc"+changedProps["score"].ToString());
             this._textOne.text=changedProps["score"].ToString();
         }else{
             this._textTwo.text=changedProps["score"].ToString();
