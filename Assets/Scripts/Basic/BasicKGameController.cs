@@ -11,10 +11,7 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
     public static BasicKGameController instance;
 
     // Game state
-        public int _scoreOne = 0; // remove
-        public int _scoreTwo = 0; // remove
         public Dictionary<string, int> _playerIdToScore = new Dictionary<string, int>();
-        //  PhotonNetwork.LocalPlayer.CustomProperties["Score"] make helper function
 
         private static Player _otherPlayer;
         private static Player _localPlayer;
@@ -22,7 +19,6 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
 
         public bool _isGameOver = false;
         public bool _isTurnToServe = false; // whether something happens if user presses space, initially true if master
-        // rely on playerid 
         public bool _isRoundInProgress = false; // whether ball is moving
 
         private int _pingCounter; // TODO: kz clean up
@@ -33,8 +29,8 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
         int _originY = 0;
 
     // UI components
-        public Text _textOne;
-        public Text _textTwo;
+        public Text _scoreTextOne;
+        public Text _scoreTextTwo;
         [SerializeField] GameObject _debugPanel;
         [SerializeField] bool _debugEnableWallPanel = false;
         MessagePanelController _logPanel;
@@ -105,7 +101,6 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
     }
 
     public override void OnJoinedRoom(){
-        // TODO this code is not exexcuting,investigate why
         if (PhotonNetwork.PlayerListOthers.Length>0){
             other=PhotonNetwork.PlayerListOthers[0];
             _otherPlayerWallPanel = _endZoneWallPanelOne;
@@ -124,6 +119,11 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
         if(!_isGameOver){
             ResetGame();
         }
+        if (PhotonNetwork.PlayerListOthers.Length>0){
+            other=PhotonNetwork.PlayerListOthers[0];
+            _otherPlayerWallPanel = _endZoneWallPanelOne;
+            _myWallPanel = _endZoneWallPanelTwo;
+        }
     }
 
     void ResetGame(){
@@ -132,7 +132,7 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
         // 2. clear player score, ball and paddle positions, lastKnownPositions
         // 3. set player name?
         // 4. initialize ball positions based on where ball object was placed?
-        _gameOverPanel.SetActive(false); //! move to text component?
+        _gameOverPanel.SetActive(false);
         _ballEntity.SetPosition(_originX, _originY);
         SetLocalPlayerScore(0);
         _isGameOver = false;
@@ -142,7 +142,7 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
         ResetRound();
     }
 
-    private int PingCheck(Player player){
+    int PingCheck(Player player){
         Hashtable properties = player.CustomProperties;
         int ping = PhotonNetwork.GetPing();
         if(properties.ContainsKey("Ping")){
@@ -191,7 +191,7 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
             GoToMainMenu();
         }
 
-        // TODO: Handling game events as they happen 
+        // upcoming: Handling game events as they happen 
     }
 
     // * DOC:
@@ -233,14 +233,30 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
         _logPanel.LogValue("Other wall panel", status.ToString());
     }
 
-    //TODO remove references to player 1 and 2
-    public void GivePointToPlayerOne()
+    public void HandleBallEnterEndZone(string rotValue)
     {
-        Debug.Log("aaaa"+_localPlayer.CustomProperties["score"] );
+        switch(rotValue)
+        {
+            case "Rot0":
+                if ((int)_localPlayer.CustomProperties["Rot"] == 180)
+                {
+                    GivePointToLocalPlayer();
+                }
+                break;
+            case "Rot180":
+                if ((int)_localPlayer.CustomProperties["Rot"] ==  0)
+                {
+                    GivePointToLocalPlayer();
+                }
+                break;
+        }        
+    }
+
+    public void GivePointToLocalPlayer()
+    {
         int newScore = (int)_localPlayer.CustomProperties["score"] + 1;
-        Debug.Log("bbbb" + newScore);
+        _logPanel.LogValue("score happened", newScore.ToString());
         SetLocalPlayerScore(newScore);
-        //this._textOne.text =newScore.ToString();
         if(newScore >= _scoreToWin)
         {
             DeclareWinner(instance._myName.text);
@@ -248,44 +264,34 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
         ResetRound();
     }
 
-    public void GivePointToPlayerTwo()
-    {
-        //TODO AC: figure out if we need casting to int
-        int newScore = (int)_localPlayer.CustomProperties["score"] + 1;
-        //TODO AC: make this agnostic but also playable with one person in scene
-        SetLocalPlayerScore(newScore);
-        this._textTwo.text = _scoreOne.ToString();
-        if(newScore >= _scoreToWin)
-        {
-            // TODO AC : declare winner other person
-        }
-        ResetRound();
-    }
-
     public void SetLocalPlayerScore(int score)
     {
-        // TODO: move initialization to beginning
-        Hashtable props= _localPlayer.CustomProperties;
-        if(props.ContainsKey("score")){
-            props["score"]=score;
-        }else{
-            props.Add("score", score);
-        }
+        Hashtable props = _localPlayer.CustomProperties;
+        props["score"] = score;
         _localPlayer.SetCustomProperties(props);
-        //Debug.Log(_localPlayer.CustomProperties["score"] );
     }
 
     public override void OnPlayerPropertiesUpdate(Player target, Hashtable changedProps)  
     {  
-        if(!changedProps.ContainsKey("score")){
+        if(!changedProps.ContainsKey("score"))
+        {
             return;
         }
-		if((int)changedProps["Rot"]==0){
-            Debug.Log("cccc"+changedProps["score"].ToString());
-            this._textOne.text=changedProps["score"].ToString();
-        }else{
-            this._textTwo.text=changedProps["score"].ToString();
+		if((int)changedProps["Rot"]==0)
+        {
+            PrintHashtable(changedProps);
+            this._scoreTextOne.text=changedProps["score"].ToString();
         }
+        else
+        {
+            PrintHashtable(changedProps);
+            this._scoreTextTwo.text=changedProps["score"].ToString();
+        }
+        // TODO AC: only reset if score has changed
+        // if (condition)
+        // {
+            ResetRound();
+        // }
     }
 
     public void ResetRound()
@@ -295,7 +301,6 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
         // SetMyWallPanel(true);
     }
 
-    //TODO remove references to player 1 and 2
     public void ResetBall()
     {
         _ballEntity.SetPosition(_originX, _originY);
@@ -314,4 +319,14 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
         _winnerText.text = playerName + " Wins";
         _gameOverPanel.SetActive(true);
     }
+
+    // Utility Functions:
+    void PrintHashtable(Hashtable hashTable)
+    {
+        foreach(string key in hashTable.Keys)
+        {
+            Debug.Log($"{key}: {hashTable[key]}");
+        }
+    }
+   
 }

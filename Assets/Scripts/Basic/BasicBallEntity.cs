@@ -54,19 +54,9 @@ public class BasicBallEntity : MonoBehaviourPunCallbacks {
         {
             _xVelocity = _xVelocity * -1f;
         }
-        else if(other.tag == "EndTwo")
-        {
-            // player one scores
-            BasicKGameController.instance.GivePointToPlayerOne();
-        }
-        else if(other.tag == "EndOne")
-        {
-            // player two scores
-            BasicKGameController.instance.GivePointToPlayerTwo();
-        }
         else
         {
-            return;
+            BasicKGameController.instance.HandleBallEnterEndZone(other.tag);
         }
     }
 

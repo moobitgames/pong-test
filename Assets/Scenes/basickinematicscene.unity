@@ -215,11 +215,11 @@ GameObject:
   - component: {fileID: 210549400}
   m_Layer: 0
   m_Name: EndTwoNotificationZone
-  m_TagString: NotificationZone
+  m_TagString: Rot180
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &210549399
 Transform:
   m_ObjectHideFlags: 0
@@ -829,7 +829,7 @@ GameObject:
   - component: {fileID: 528748784}
   m_Layer: 0
   m_Name: EndOne
-  m_TagString: EndOne
+  m_TagString: Rot0
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -886,8 +886,8 @@ GameObject:
   - component: {fileID: 775687717}
   - component: {fileID: 775687718}
   m_Layer: 5
-  m_Name: ScoreOne
-  m_TagString: Untagged
+  m_Name: ScoreRot0
+  m_TagString: Rot0
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1904,15 +1904,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 86244465c2fd34530943f9ef1d83d645, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _scoreOne: 0
-  _scoreTwo: 0
   _isMasterClient: 0
   _isGameOver: 0
   _isTurnToServe: 0
   _isRoundInProgress: 0
   _scoreToWin: 3
-  _textOne: {fileID: 775687718}
-  _textTwo: {fileID: 2067645372}
+  _scoreTextOne: {fileID: 775687718}
+  _scoreTextTwo: {fileID: 2067645372}
   _debugPanel: {fileID: 1129399693}
   _debugEnableWallPanel: 0
   _gameOverPanel: {fileID: 233732635}
@@ -2120,11 +2118,11 @@ GameObject:
   - component: {fileID: 2028900642}
   m_Layer: 0
   m_Name: EndOneNotificationZone
-  m_TagString: NotificationZone
+  m_TagString: Rot0
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2028900641
 Transform:
   m_ObjectHideFlags: 0
@@ -2269,8 +2267,8 @@ GameObject:
   - component: {fileID: 2067645371}
   - component: {fileID: 2067645372}
   m_Layer: 5
-  m_Name: ScoreTwo
-  m_TagString: Untagged
+  m_Name: ScoreRot180
+  m_TagString: Rot180
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2455,7 +2453,7 @@ GameObject:
   - component: {fileID: 2131692973}
   m_Layer: 0
   m_Name: EndTwo
-  m_TagString: EndTwo
+  m_TagString: Rot180
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
