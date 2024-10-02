@@ -13,6 +13,8 @@ TagManager:
   - SideWallPanel
   - NotificationZone
   - Bullet
+  - Rot0
+  - Rot180
   layers:
   - Default
   - TransparentFX

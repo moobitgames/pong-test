@@ -30,7 +30,7 @@ public class GameSetupController : MonoBehaviour
             paddle.tag="Paddle";
 
         }
-        hash.Add("Score",0);
+        hash.Add("score",0);
         PhotonNetwork.LocalPlayer.SetCustomProperties(hash);
     }
 }
