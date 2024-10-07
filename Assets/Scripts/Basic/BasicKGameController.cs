@@ -85,7 +85,7 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
     }
 
     // might not be needed
-    public void SetTheirName(string nameIn){
+    public void SetTheirName(){
         _theirName.text=_otherPlayer.NickName;
     }
 
@@ -98,6 +98,7 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
 
     public override void OnPlayerEnteredRoom(Player newPlayer){
         _otherPlayer=newPlayer;
+        SetTheirName();
     }
 
     public override void OnJoinedRoom(){
@@ -240,28 +241,35 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
             case "Rot0":
                 if ((int)_localPlayer.CustomProperties["Rot"] == 180)
                 {
-                    GivePointToLocalPlayer();
+                    Debug.Log("goodbye");
+                    GivePointToPlayer(_localPlayer);
+                }else{
+                    Debug.Log("Hello");
+                    GivePointToPlayer(_otherPlayer);
                 }
                 break;
             case "Rot180":
                 if ((int)_localPlayer.CustomProperties["Rot"] ==  0)
                 {
-                    GivePointToLocalPlayer();
+                    GivePointToPlayer(_localPlayer);
+                }else{
+                    GivePointToPlayer(_otherPlayer);
                 }
                 break;
-        }        
+        }
+        Debug.Log(rotValue);
+        ResetRound();    
     }
 
-    public void GivePointToLocalPlayer()
+    public void GivePointToPlayer(Player scorePlayer)
     {
-        int newScore = (int)_localPlayer.CustomProperties["score"] + 1;
-        _logPanel.LogValue("score happened", newScore.ToString());
-        SetLocalPlayerScore(newScore);
-        if(newScore >= _scoreToWin)
-        {
-            DeclareWinner(instance._myName.text);
-        }
-        ResetRound();
+        int newScore = (int)scorePlayer.CustomProperties["score"] + 1;
+        _logPanel.LogValue("score happened"+scorePlayer.NickName, newScore.ToString());
+        SetPlayerScore(scorePlayer,newScore);
+        // if(newScore >= _scoreToWin)
+        // {
+        //     DeclareWinner(instance._myName.text);
+        // }
     }
 
     public void SetLocalPlayerScore(int score)
@@ -271,27 +279,39 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
         _localPlayer.SetCustomProperties(props);
     }
 
+    public void SetPlayerScore(Player scorePlayer, int score)
+    {
+        Hashtable props = scorePlayer.CustomProperties;
+        props["score"] = score;
+        scorePlayer.SetCustomProperties(props);
+    }
+
     public override void OnPlayerPropertiesUpdate(Player target, Hashtable changedProps)  
     {  
         if(!changedProps.ContainsKey("score"))
         {
             return;
         }
-		if((int)changedProps["Rot"]==0)
+        int newScore=(int)changedProps["score"];
+        //PrintHashtable(changedProps);
+		if((int)target.CustomProperties["Rot"] == (int)_localPlayer.CustomProperties["Rot"])
         {
-            PrintHashtable(changedProps);
-            this._scoreTextOne.text=changedProps["score"].ToString();
+            //PrintHashtable(changedProps);
+            this._scoreTextOne.text=newScore.ToString();
         }
         else
         {
-            PrintHashtable(changedProps);
-            this._scoreTextTwo.text=changedProps["score"].ToString();
+            //PrintHashtable(changedProps);
+            this._scoreTextTwo.text=newScore.ToString();
         }
         // TODO AC: only reset if score has changed
         // if (condition)
         // {
-            ResetRound();
+        //     ResetRound();
         // }
+        if(newScore >= _scoreToWin){
+            DeclareWinner(target.NickName);
+        }
     }
 
     public void ResetRound()
