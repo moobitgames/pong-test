@@ -17,15 +17,15 @@ public class GameSetupController : MonoBehaviour
         Hashtable hash=new Hashtable();
         if(PhotonNetwork.IsMasterClient){
             PhotonNetwork.Instantiate(Path.Combine("PhotonPrefabs", "Paddle"), Vector3.zero, Quaternion.identity);
-            hash.Add("Rot",0);
+            hash.Add("rot",0);
         }else{
             GameObject paddle=null;
-            if((int) PhotonNetwork.MasterClient.CustomProperties["Rot"]==0){
+            if((int) PhotonNetwork.MasterClient.CustomProperties["rot"]==0){
                 paddle=PhotonNetwork.Instantiate(Path.Combine("PhotonPrefabs", "Paddle"), Vector3.zero, Quaternion.Euler(new Vector3(0,0,180)));
-                hash.Add("Rot",180);
+                hash.Add("rot",180);
             }else{
                 paddle=PhotonNetwork.Instantiate(Path.Combine("PhotonPrefabs", "Paddle"), Vector3.zero, Quaternion.identity);
-                hash.Add("Rot",0);
+                hash.Add("rot",0);
             }
             paddle.tag="Paddle";
 
