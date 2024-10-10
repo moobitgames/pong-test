@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using Photon.Pun;
@@ -15,11 +15,10 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
 
         private static Player _otherPlayer;
         private static Player _localPlayer;
-        public bool _isMasterClient = false;
-
-        public bool _isGameOver = false;
-        public bool _isTurnToServe = false; // whether something happens if user presses space, initially true if master
-        public bool _isRoundInProgress = false; // whether ball is moving
+        public bool _isMasterClient = false; //**
+        public bool _isGameOver = false; //**
+        public bool _isTurnToServe = false; // whether something happens if user presses space, initially true if master //**
+        public bool _isRoundInProgress = false; // whether ball is moving //**
 
         private int _pingCounter; // TODO: kz clean up
 
@@ -170,8 +169,8 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
                 int otherPing = PingCheck(other);
                 otherPingString = "\nPing2:"+ otherPing.ToString();
             }
-            _logPanel.LogValue("Ping local", localPing.ToString());
-            _logPanel.LogValue("Ping other", otherPingString);
+            // _logPanel.LogValue("Ping local", localPing.ToString());
+            // _logPanel.LogValue("Ping other", otherPingString);
             this._pingCounter = 0;
         } else {
             this._pingCounter++;
@@ -286,8 +285,6 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
         scorePlayer.SetCustomProperties(props);
     }
 
-    
-
     public override void OnPlayerPropertiesUpdate(Player target, Hashtable changedProps)  
     {  
         if(!changedProps.ContainsKey("score"))
@@ -295,15 +292,14 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
             return;
         }
 
+        _logPanel.LogValue("local customprops", GetHashtableString(_localPlayer.CustomProperties));
+        _logPanel.LogValue("other customprops", GetHashtableString(_otherPlayer.CustomProperties));
         int newScore=(int)changedProps["score"];
-        //PrintHashtable(changedProps);
 		if((int)target.CustomProperties["rot"] == (int)_localPlayer.CustomProperties["rot"])
         {
-            //PrintHashtable(changedProps);
             this._scoreTextOne.text = newScore.ToString();
         }else
         {
-            //PrintHashtable(changedProps);
             this._scoreTextTwo.text = newScore.ToString();
         }
         // TODO AC: only reset if score has changed
@@ -343,12 +339,15 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
     }
 
     // Utility Functions:
-    void PrintHashtable(Hashtable hashTable)
+    string GetHashtableString(Hashtable hashtable)
     {
-        foreach(string key in hashTable.Keys)
+        string valuesStr = "";
+        foreach(string key in hashtable.Keys)
         {
-            Debug.Log($"{key}: {hashTable[key]}");
+            valuesStr += $"{key}: {hashtable[key]}\n";
         }
+        Debug.Log(valuesStr);
+        return valuesStr;
     }
    
 }
