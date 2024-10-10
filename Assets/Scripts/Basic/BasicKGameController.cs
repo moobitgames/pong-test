@@ -136,9 +136,14 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
         _ballEntity.SetPosition(_originX, _originY);
         SetLocalPlayerScore(0);
         _isGameOver = false;
+        _logPanel.LogValue("_isGameOver", _isGameOver.ToString());
         _isTurnToServe = PhotonNetwork.IsMasterClient;
+        _logPanel.LogValue("_isTurnToServe", _isTurnToServe.ToString());
         _isMasterClient = PhotonNetwork.IsMasterClient;
+        _logPanel.LogValue("_isMasterClient", _isMasterClient.ToString());
+
         _isRoundInProgress = false;
+        _logPanel.LogValue("_isRoundInProgress", _isRoundInProgress.ToString());
         ResetRound();
     }
 
@@ -204,6 +209,7 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
     public void StartRound()
     {
         _isRoundInProgress = true;
+        _logPanel.LogValue("_isRoundInProgress", _isRoundInProgress.ToString());
     }
 
     // * DOC:
@@ -323,6 +329,7 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
     {
         _ballEntity.SetPosition(_originX, _originY);
         _isRoundInProgress = false;
+        _logPanel.LogValue("_isRoundInProgress", _isRoundInProgress.ToString());
     }
 
     public void GoToMainMenu()
@@ -334,6 +341,7 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
     void DeclareWinner(string playerName)
     {
         _isGameOver = true;
+        _logPanel.LogValue("_isGameOver", _isGameOver.ToString());
         _winnerText.text = playerName + " Wins";
         _gameOverPanel.SetActive(true);
     }

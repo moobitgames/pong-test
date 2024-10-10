@@ -64,7 +64,7 @@ public class MessagePanelController : MonoBehaviour
         string textBody = "";
         foreach(var entry in _logValues)
         {
-            textBody += $"{entry.Key}: {entry.Value} \n";
+            textBody += $"<b>{entry.Key}</b>: {entry.Value} \n";
         }
         
         _messageText.text = textBody;
