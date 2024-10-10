@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using Photon.Pun;
@@ -80,11 +80,11 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
             _myWallPanel = _endZoneWallPanelOne;
         }
 
-        // reset game
+        // Reset game
         ResetGame();
     }
 
-    // might not be needed
+    // Might not be needed
     public void SetTheirName(){
         _theirName.text=_otherPlayer.NickName;
     }
@@ -97,7 +97,7 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
     }
 
     public override void OnPlayerEnteredRoom(Player newPlayer){
-        _otherPlayer=newPlayer;
+        _otherPlayer = newPlayer;
         SetTheirName();
     }
 
@@ -121,18 +121,18 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
             ResetGame();
         }
         if (PhotonNetwork.PlayerListOthers.Length>0){
-            other=PhotonNetwork.PlayerListOthers[0];
+            other = PhotonNetwork.PlayerListOthers[0];
             _otherPlayerWallPanel = _endZoneWallPanelOne;
             _myWallPanel = _endZoneWallPanelTwo;
         }
     }
 
     void ResetGame(){
-        // game start: 
-        // 1. clear all ui panels
-        // 2. clear player score, ball and paddle positions, lastKnownPositions
-        // 3. set player name?
-        // 4. initialize ball positions based on where ball object was placed?
+        // Game start: 
+        // 1. Clear all ui panels
+        // 2. Clear player score, ball and paddle positions, lastKnownPositions
+        // 3. Set player name?
+        // 4. Initialize ball positions based on where ball object was placed?
         _gameOverPanel.SetActive(false);
         _ballEntity.SetPosition(_originX, _originY);
         SetLocalPlayerScore(0);
@@ -162,22 +162,22 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
             _logPanel.ToggleMessagePanel(); // Show or hide the message panel
         }
 
-        // debug panel logger
-        if (this._pingCounter>=60){
-            int localPing=PingCheck(PhotonNetwork.LocalPlayer);
+        // Debug panel logger
+        if (this._pingCounter >= 60){
+            int localPing = PingCheck(PhotonNetwork.LocalPlayer);
             string otherPingString="";
-            if(other!=null && other.CustomProperties!=null){
-                int otherPing=PingCheck(other);
-                otherPingString="\nPing2:"+ otherPing.ToString();
+            if(other!= null && other.CustomProperties != null){
+                int otherPing = PingCheck(other);
+                otherPingString = "\nPing2:"+ otherPing.ToString();
             }
             _logPanel.LogValue("Ping local", localPing.ToString());
             _logPanel.LogValue("Ping other", otherPingString);
-            this._pingCounter=0;
+            this._pingCounter = 0;
         } else {
             this._pingCounter++;
         }
 
-        // user presses space
+        // User presses space
         if (Input.GetKeyDown(KeyCode.Space))
         {
             if (!_isGameOver && !_isRoundInProgress && _isTurnToServe)
@@ -186,13 +186,13 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
                 StartRound();
             }
         }
-        // user presses escape
+        // User presses escape
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             GoToMainMenu();
         }
 
-        // upcoming: Handling game events as they happen 
+        // Upcoming: Handling game events as they happen 
     }
 
     // * DOC:
@@ -239,7 +239,7 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
         switch(rotValue)
         {
             case "Rot0":
-                if ((int)_localPlayer.CustomProperties["Rot"] == 180)
+                if ((int)_localPlayer.CustomProperties["rot"] == 180)
                 {
                     Debug.Log("goodbye");
                     GivePointToPlayer(_localPlayer);
@@ -249,7 +249,7 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
                 }
                 break;
             case "Rot180":
-                if ((int)_localPlayer.CustomProperties["Rot"] ==  0)
+                if ((int)_localPlayer.CustomProperties["rot"] ==  0)
                 {
                     GivePointToPlayer(_localPlayer);
                 }else{
@@ -286,23 +286,25 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
         scorePlayer.SetCustomProperties(props);
     }
 
+    
+
     public override void OnPlayerPropertiesUpdate(Player target, Hashtable changedProps)  
     {  
         if(!changedProps.ContainsKey("score"))
         {
             return;
         }
+
         int newScore=(int)changedProps["score"];
         //PrintHashtable(changedProps);
-		if((int)target.CustomProperties["Rot"] == (int)_localPlayer.CustomProperties["Rot"])
+		if((int)target.CustomProperties["rot"] == (int)_localPlayer.CustomProperties["rot"])
         {
             //PrintHashtable(changedProps);
-            this._scoreTextOne.text=newScore.ToString();
-        }
-        else
+            this._scoreTextOne.text = newScore.ToString();
+        }else
         {
             //PrintHashtable(changedProps);
-            this._scoreTextTwo.text=newScore.ToString();
+            this._scoreTextTwo.text = newScore.ToString();
         }
         // TODO AC: only reset if score has changed
         // if (condition)
