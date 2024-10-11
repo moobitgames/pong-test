@@ -120,6 +120,7 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
         if(!_isGameOver){
             ResetGame();
         }
+        
         if (PhotonNetwork.PlayerListOthers.Length>0){
             other = PhotonNetwork.PlayerListOthers[0];
             _otherPlayerWallPanel = _endZoneWallPanelOne;
@@ -239,7 +240,7 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
         switch(rotValue)
         {
             case "Rot0":
-                if ((int)_localPlayer.CustomProperties["rot"] == 180)
+                if ((int) _localPlayer.CustomProperties["rot"] == 180)
                 {
                     Debug.Log("goodbye");
                     GivePointToPlayer(_localPlayer);
@@ -249,7 +250,7 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
                 }
                 break;
             case "Rot180":
-                if ((int)_localPlayer.CustomProperties["rot"] ==  0)
+                if ((int) _localPlayer.CustomProperties["rot"] ==  0)
                 {
                     GivePointToPlayer(_localPlayer);
                 }else{
@@ -263,7 +264,7 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
 
     public void GivePointToPlayer(Player scorePlayer)
     {
-        int newScore = (int)scorePlayer.CustomProperties["score"] + 1;
+        int newScore = (int) scorePlayer.CustomProperties["score"] + 1;
         _logPanel.LogValue("score happened"+scorePlayer.NickName, newScore.ToString());
         SetPlayerScore(scorePlayer,newScore);
         // if(newScore >= _scoreToWin)
@@ -295,9 +296,9 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
             return;
         }
 
-        int newScore=(int)changedProps["score"];
+        int newScore=(int) changedProps["score"];
         //PrintHashtable(changedProps);
-		if((int)target.CustomProperties["rot"] == (int)_localPlayer.CustomProperties["rot"])
+		if((int) target.CustomProperties["rot"] == (int) _localPlayer.CustomProperties["rot"])
         {
             //PrintHashtable(changedProps);
             this._scoreTextOne.text = newScore.ToString();
