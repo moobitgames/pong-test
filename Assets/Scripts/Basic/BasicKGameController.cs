@@ -102,7 +102,7 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
 
     public override void OnJoinedRoom(){
         if (PhotonNetwork.PlayerListOthers.Length>0){
-            other=PhotonNetwork.PlayerListOthers[0];
+            other = PhotonNetwork.PlayerListOthers[0];
             _otherPlayerWallPanel = _endZoneWallPanelOne;
             _myWallPanel = _endZoneWallPanelTwo;
         } else 
