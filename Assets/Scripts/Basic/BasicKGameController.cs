@@ -38,9 +38,7 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
         [SerializeField] Text _myName;
         [SerializeField] Text _theirName;        
 
-    // Game world objects
-        private static Player other;
-        
+    // Game world objects        
         [SerializeField] BasicBallEntity _ballEntity;
         [SerializeField] GameObject _endZoneWallPanelOne;
         [SerializeField] GameObject _endZoneWallPanelTwo;
@@ -53,7 +51,7 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
         // set player name
         _myName.text = PhotonNetwork.NickName;
         // set player score
-        SetLocalPlayerScore(0);
+        SetPlayerScore(_localPlayer,0);
 
         // instantiate debugger pannel
         _logPanel = _debugPanel.GetComponent<MessagePanelController>();
@@ -102,7 +100,8 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
 
     public override void OnJoinedRoom(){
         if (PhotonNetwork.PlayerListOthers.Length>0){
-            other = PhotonNetwork.PlayerListOthers[0];
+            _otherPlayer = PhotonNetwork.PlayerListOthers[0];
+            SetTheirName();
             _otherPlayerWallPanel = _endZoneWallPanelOne;
             _myWallPanel = _endZoneWallPanelTwo;
         } else 
@@ -111,7 +110,7 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
             _myWallPanel = _endZoneWallPanelOne;
         }
         // TODO: what if old user rejoins room?
-        SetLocalPlayerScore(0);
+        SetPlayerScore(_localPlayer,0);
     }
 
     public override void OnPlayerLeftRoom(Player otherPlayer){
@@ -121,7 +120,7 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
         }
         
         if (PhotonNetwork.PlayerListOthers.Length>0){
-            other = PhotonNetwork.PlayerListOthers[0];
+            _otherPlayer = PhotonNetwork.PlayerListOthers[0];
             _otherPlayerWallPanel = _endZoneWallPanelOne;
             _myWallPanel = _endZoneWallPanelTwo;
         }
@@ -135,24 +134,43 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
         // 4. Initialize ball positions based on where ball object was placed?
         _gameOverPanel.SetActive(false);
         _ballEntity.SetPosition(_originX, _originY);
-        SetLocalPlayerScore(0);
-        _isGameOver = false;
-        _logPanel.LogValue("_isGameOver", _isGameOver.ToString());
-        _isTurnToServe = PhotonNetwork.IsMasterClient;
-        _logPanel.LogValue("_isTurnToServe", _isTurnToServe.ToString());
-        _isMasterClient = PhotonNetwork.IsMasterClient;
-        _logPanel.LogValue("_isMasterClient", _isMasterClient.ToString());
-
-        _isRoundInProgress = false;
-        _logPanel.LogValue("_isRoundInProgress", _isRoundInProgress.ToString());
+        SetPlayerScore(_localPlayer,0);
+        SetIsGameOver(false);
+        SetIsTurnToServe(PhotonNetwork.IsMasterClient);
+        SetIsMasterClient();
+        SetIsRoundInProgress(false);
         ResetRound();
     }
 
+
+    public void SetIsGameOver(bool status)
+    {
+        _isGameOver = status;
+        _logPanel.LogValue("_isGameOver", _isGameOver.ToString());
+    }
+
+    public void SetIsTurnToServe(bool status)
+    {
+        _isTurnToServe = status;
+        _logPanel.LogValue("_isTurnToServe", _isTurnToServe.ToString());
+    }
+
+    public void SetIsRoundInProgress(bool status){
+        _isRoundInProgress = status;
+        _logPanel.LogValue("_isRoundInProgress", _isRoundInProgress.ToString());
+    }
+
+    public void SetIsMasterClient(){
+        _isMasterClient = PhotonNetwork.IsMasterClient;
+        _logPanel.LogValue("_isMasterClient", _isMasterClient.ToString());
+    }
+
+
     int PingCheck(Player player){
-        Hashtable properties = player.CustomProperties;
+        Hashtable properties = new Hashtable();
         int ping = PhotonNetwork.GetPing();
         if(properties.ContainsKey("Ping")){
-            properties["Ping"]=ping;
+            properties["Ping"] = ping;
         }else{
             properties.Add("Ping",ping);
         }
@@ -171,8 +189,8 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
         if (this._pingCounter >= 60){
             int localPing = PingCheck(PhotonNetwork.LocalPlayer);
             string otherPingString = "";
-            if(other != null && other.CustomProperties != null){
-                int otherPing = PingCheck(other);
+            if(_otherPlayer != null && _otherPlayer.CustomProperties != null){
+                int otherPing = PingCheck(_otherPlayer);
                 otherPingString = "\nPing2:"+ otherPing.ToString();
             }
             // _logPanel.LogValue("Ping local", localPing.ToString());
@@ -187,7 +205,7 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
         {
             if (!_isGameOver && !_isRoundInProgress && _isTurnToServe)
             {
-                this.photonView.RPC("RPC_SpacePressed", other);
+                this.photonView.RPC("RPC_SpacePressed", _otherPlayer);
                 StartRound();
             }
         }
@@ -209,8 +227,7 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
 
     public void StartRound()
     {
-        _isRoundInProgress = true;
-        _logPanel.LogValue("_isRoundInProgress", _isRoundInProgress.ToString());
+        SetIsRoundInProgress(true);
     }
 
     // * DOC:
@@ -220,7 +237,7 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
     // * pass through
     public void NotifyOtherPlayerBallMissed()
     {
-        this.photonView.RPC("RPC_BallTraveledBehindOtherPaddle", other);
+        this.photonView.RPC("RPC_BallTraveledBehindOtherPaddle", _otherPlayer);
     }
 
     [PunRPC]
@@ -239,6 +256,8 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
         _otherPlayerWallPanel.SetActive(status);
         _logPanel.LogValue("Other wall panel", status.ToString());
     }
+
+
 
     public void HandleBallEnterEndZone(string rotValue)
     {
@@ -278,16 +297,17 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
         // }
     }
 
-    public void SetLocalPlayerScore(int score)
-    {
-        Hashtable props = _localPlayer.CustomProperties;
-        props["score"] = score;
-        _localPlayer.SetCustomProperties(props);
-    }
+    // public void SetLocalPlayerScore(int score)
+    // {
+    //     Hashtable props = _localPlayer.CustomProperties;
+    //     props["score"] = score;
+    //     _localPlayer.SetCustomProperties(props);
+    // }
 
     public void SetPlayerScore(Player scorePlayer, int score)
     {
-        Hashtable props = scorePlayer.CustomProperties;
+        Hashtable props = new Hashtable();
+        props.Add("score",score);
         props["score"] = score;
         scorePlayer.SetCustomProperties(props);
     }
@@ -329,8 +349,7 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
     public void ResetBall()
     {
         _ballEntity.SetPosition(_originX, _originY);
-        _isRoundInProgress = false;
-        _logPanel.LogValue("_isRoundInProgress", _isRoundInProgress.ToString());
+        SetIsRoundInProgress(false);
     }
 
     public void GoToMainMenu()
