@@ -13,10 +13,10 @@ public class SettingsController : MonoBehaviour
 	static string playerName = "";
     static string roomName = "";
 	static string regionString;
-	static int regionValue;
+	static int regionValue = 11;
     static int musicVolume = 5;
     static SettingsController instance;
-    
+
     void Awake()
     {
     	this.regionSelect.value = SettingsController.regionValue;
