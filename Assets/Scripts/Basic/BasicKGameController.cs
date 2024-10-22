@@ -99,7 +99,8 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
     }
 
     public override void OnJoinedRoom(){
-        if (PhotonNetwork.PlayerListOthers.Length>0){
+        if (PhotonNetwork.PlayerListOthers.Length>0)
+        {
             _otherPlayer = PhotonNetwork.PlayerListOthers[0];
             SetTheirName();
             _otherPlayerWallPanel = _endZoneWallPanelOne;
@@ -115,11 +116,13 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
 
     public override void OnPlayerLeftRoom(Player otherPlayer){
         // reset game
-        if(!_isGameOver){
+        if (!_isGameOver)
+        {
             ResetGame();
         }
         
-        if (PhotonNetwork.PlayerListOthers.Length>0){
+        if (PhotonNetwork.PlayerListOthers.Length>0)
+        {
             _otherPlayer = PhotonNetwork.PlayerListOthers[0];
             _otherPlayerWallPanel = _endZoneWallPanelOne;
             _myWallPanel = _endZoneWallPanelTwo;
@@ -169,9 +172,11 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
     int PingCheck(Player player){
         Hashtable properties = new Hashtable();
         int ping = PhotonNetwork.GetPing();
-        if(properties.ContainsKey("Ping")){
+        if (properties.ContainsKey("Ping"))
+        {
             properties["Ping"] = ping;
-        }else{
+        }else
+        {
             properties.Add("Ping",ping);
         }
         //player.SetCustomProperties(properties);
@@ -186,17 +191,20 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
         }
 
         // Debug panel logger
-        if (this._pingCounter >= 60){
+        if (this._pingCounter >= 60)
+        {
             int localPing = PingCheck(PhotonNetwork.LocalPlayer);
             string otherPingString = "";
-            if(_otherPlayer != null && _otherPlayer.CustomProperties != null){
+            if(_otherPlayer != null && _otherPlayer.CustomProperties != null)
+            {
                 int otherPing = PingCheck(_otherPlayer);
                 otherPingString = "\nPing2:"+ otherPing.ToString();
             }
             // _logPanel.LogValue("Ping local", localPing.ToString());
             // _logPanel.LogValue("Ping other", otherPingString);
             this._pingCounter = 0;
-        } else {
+        } else 
+        {
             this._pingCounter++;
         }
 
@@ -334,7 +342,8 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
         // {
         //     ResetRound();
         // }
-        if(newScore >= _scoreToWin){
+        if(newScore >= _scoreToWin)
+        {
             DeclareWinner(target.NickName);
         }
     }
