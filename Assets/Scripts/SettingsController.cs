@@ -13,13 +13,16 @@ public class SettingsController : MonoBehaviour
 	static string playerName = "";
     static string roomName = "";
 	static string regionString;
-	static int regionValue = 11;
+	static int regionValue= -1;
     static int musicVolume = 5;
     static SettingsController instance;
 
     void Awake()
     {
-    	this.regionSelect.value = SettingsController.regionValue;
+    	if (regionValue != -1)
+    	{
+    		this.regionSelect.value = SettingsController.regionValue;
+    	}
     }
 
 	private bool state=false;
@@ -27,20 +30,28 @@ public class SettingsController : MonoBehaviour
 
 	public void pullMenu(){
 		if(!state){
+			if(regionValue == -1)
+			{
+				regionString=PhotonNetwork.CloudRegion;
+				int index = regionSelect.options.FindIndex((i) => { return i.text.Equals(PhotonNetwork.CloudRegion); });
+				this.regionSelect.value = index;
+			}
 			settingMenu.SetActive(true);
-			state=true;
+			state=true;			
 		}else{
 			settingMenu.SetActive(false);
 			state=false;
 		}
-		Debug.Log("Hello");
 		
 	}
 
 	public void changeRegion(){
-		PhotonNetwork.Disconnect();
-		PhotonNetwork.ConnectToRegion(regionSelect.captionText.text);
-		SetRegionString(regionSelect.captionText.text,regionSelect.value);
+		if(regionString!=regionSelect.captionText.text)
+		{
+			PhotonNetwork.Disconnect();
+			PhotonNetwork.ConnectToRegion(regionSelect.captionText.text);
+			SetRegionString(regionSelect.captionText.text,regionSelect.value);
+		}
 	}
 
 	public string GetPlayerName(){
