@@ -48,7 +48,7 @@ public class BasicBallEntity : MonoBehaviourPunCallbacks {
         }
         else if(other.tag == "EndZoneWallPanel")
         {
-            _yVelocity = _yVelocity * -1f;
+            //_yVelocity = _yVelocity * -1f;
         }
         else if(other.tag == "SideWallPanel")
         {
