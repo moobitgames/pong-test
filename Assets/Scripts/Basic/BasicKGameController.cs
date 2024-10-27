@@ -194,7 +194,8 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
     }
 
     // Update is called once per frame
-    void Update () {
+    void Update () 
+    {
         if (Input.GetKeyDown(KeyCode.F2))
         {
             _logPanel.ToggleMessagePanel(); // Show or hide the message panel
