@@ -55,6 +55,7 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
 
         // instantiate debugger pannel
         _logPanel = _debugPanel.GetComponent<MessagePanelController>();
+        Debug.Log("aaaaa"+(PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey("rotPositions")));
 
         // deactivate/activate wall panels
         if (_debugEnableWallPanel)
@@ -99,6 +100,8 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
     }
 
     public override void OnJoinedRoom(){
+        _logPanel.LogValue("PhotonNW.rotPositions", GetHashtableString(PhotonNetwork.CurrentRoom.CustomProperties));
+        
         if (PhotonNetwork.PlayerListOthers.Length>0)
         {
             _otherPlayer = PhotonNetwork.PlayerListOthers[0];
@@ -274,10 +277,8 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
             case "Rot0":
                 if ((int) _localPlayer.CustomProperties["rot"] == 180)
                 {
-                    Debug.Log("goodbye");
                     GivePointToPlayer(_localPlayer);
                 }else{
-                    Debug.Log("Hello");
                     GivePointToPlayer(_otherPlayer);
                 }
                 break;
