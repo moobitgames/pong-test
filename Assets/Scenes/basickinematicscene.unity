@@ -215,7 +215,7 @@ GameObject:
   - component: {fileID: 210549400}
   m_Layer: 0
   m_Name: EndTwoNotificationZone
-  m_TagString: Rot180
+  m_TagString: NotRot180
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1599,7 +1599,7 @@ GameObject:
   - component: {fileID: 1306081368}
   m_Layer: 0
   m_Name: EndTwoWallPanel
-  m_TagString: EndZoneWallPanel
+  m_TagString: EndZoneWallPanel180
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1616,7 +1616,7 @@ RectTransform:
   m_LocalScale: {x: 33, y: 0.8, z: 1}
   m_Children: []
   m_Father: {fileID: 2066734975}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -1917,7 +1917,7 @@ MonoBehaviour:
   _scoreTextOne: {fileID: 775687718}
   _scoreTextTwo: {fileID: 2067645372}
   _debugPanel: {fileID: 1129399693}
-  _debugEnableWallPanel: 0
+  _debugEnableWallPanel: 1
   _gameOverPanel: {fileID: 233732635}
   _winnerText: {fileID: 1034514086}
   _myName: {fileID: 1353642464}
@@ -2123,7 +2123,7 @@ GameObject:
   - component: {fileID: 2028900642}
   m_Layer: 0
   m_Name: EndOneNotificationZone
-  m_TagString: Rot0
+  m_TagString: NotRot0
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2251,8 +2251,8 @@ Transform:
   - {fileID: 2131692972}
   - {fileID: 528748783}
   - {fileID: 27351850}
-  - {fileID: 1306081366}
   - {fileID: 2125563903}
+  - {fileID: 1306081366}
   - {fileID: 1671812132}
   - {fileID: 914614571}
   - {fileID: 2028900641}
@@ -2352,7 +2352,7 @@ GameObject:
   - component: {fileID: 2125563906}
   m_Layer: 0
   m_Name: EndOneWallPanel
-  m_TagString: EndZoneWallPanel
+  m_TagString: EndZoneWallPanel0
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2369,7 +2369,7 @@ RectTransform:
   m_LocalScale: {x: 33, y: 0.8, z: 1}
   m_Children: []
   m_Father: {fileID: 2066734975}
-  m_RootOrder: 7
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}

@@ -46,13 +46,17 @@ public class BasicBallEntity : MonoBehaviourPunCallbacks {
         {
             _yVelocity = _yVelocity * -1f;
         }
-        else if(other.tag == "EndZoneWallPanel")
+        else if(other.tag.Contains("EndZoneWallPanel"))
         {
-            //_yVelocity = _yVelocity * -1f;
+            _yVelocity = _yVelocity * -1f;
         }
         else if(other.tag == "SideWallPanel")
         {
             _xVelocity = _xVelocity * -1f;
+        }
+        else if(other.tag.Contains("Not"))
+        {
+            BasicKGameController.instance.HandleBallEnterNotZone(other.tag);
         }
         else
         {

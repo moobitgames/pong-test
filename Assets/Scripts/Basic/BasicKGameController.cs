@@ -71,15 +71,17 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
         // TODO: make player agnostic
         if (PhotonNetwork.PlayerListOthers.Length>0)
         {
-            _otherPlayerWallPanel = _endZoneWallPanelOne;
-            _myWallPanel = _endZoneWallPanelTwo;
+            _otherPlayerWallPanel = GameObject.FindWithTag("EndZoneWallPanel0");
+            _myWallPanel = GameObject.FindWithTag("EndZoneWallPanel180");
         } else 
         {
-            _otherPlayerWallPanel = _endZoneWallPanelTwo;
-            _myWallPanel = _endZoneWallPanelOne;
+            _otherPlayerWallPanel = GameObject.FindWithTag("EndZoneWallPanel180");
+            _myWallPanel = GameObject.FindWithTag("EndZoneWallPanel0");
         }
 
         // Reset game
+        SetOtherPlayerWallPanel(false);
+        Debug.Log("aaa"+_localPlayer.CustomProperties.ToString());
         ResetGame();
     }
 
@@ -265,6 +267,12 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
         SetOtherPlayerWallPanel(false);
     }
 
+    [PunRPC]
+    private void RPC_OtherPlayerReset(){
+        SetMyWallPanel(false);
+        SetOtherPlayerWallPanel(true);
+    }
+
     public void SetMyWallPanel(bool status)
     {
         _myWallPanel.SetActive(status);
@@ -277,7 +285,25 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
         _logPanel.LogValue("Other wall panel", status.ToString());
     }
 
+    public void HandleBallEnterNotZone(string rotValue)
+    {
+        switch(rotValue)
+        {
+            case "NotRot0":
+                if ((int) _localPlayer.CustomProperties["rot"] == 0)
+                {
+                    NotifyOtherPlayerBallMissed();
+                }
+            break;
 
+            case "NotRot180":
+                if ((int)_localPlayer.CustomProperties["rot"] == 180)
+                {
+                    NotifyOtherPlayerBallMissed();
+                }
+            break;
+        }
+    }
 
     public void HandleBallEnterEndZone(string rotValue)
     {
@@ -286,10 +312,9 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
             case "Rot0":
                 if ((int) _localPlayer.CustomProperties["rot"] == 180)
                 {
-                    Debug.Log("goodbye");
                     GivePointToPlayer(_localPlayer);
-                }else{
-                    Debug.Log("Hello");
+                }else
+                {
                     GivePointToPlayer(_otherPlayer);
                 }
                 break;
@@ -297,7 +322,8 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
                 if ((int) _localPlayer.CustomProperties["rot"] ==  0)
                 {
                     GivePointToPlayer(_localPlayer);
-                }else{
+                }else
+                {
                     GivePointToPlayer(_otherPlayer);
                 }
                 break;
@@ -363,8 +389,9 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
     public void ResetRound()
     {
         ResetBall();
-        // SetOtherPlayerWallPanel(true);
-        // SetMyWallPanel(true);
+        SetOtherPlayerWallPanel(true);
+        SetMyWallPanel(false);
+        this.photonView.RPC("RPC_OtherPlayerReset", _otherPlayer);
     }
 
     public void ResetBall()
