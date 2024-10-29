@@ -42,18 +42,18 @@ public class GameSetupController : MonoBehaviour
         if (PhotonNetwork.CurrentRoom.CustomProperties.TryGetValue("rotPositions", out object rotPositionsObj))
         {
             // Cast the property value to a Player array
-            Player[] rotPositions = (Player[]) rotPositionsObj;
+            int[] rotPositions = (int[]) rotPositionsObj;
 
             // Find the first null position in the array and set it to the player object
             for (int i = 0; i < rotPositions.Length; i++)
             {
-                if (rotPositions[i] == null)
+                if (rotPositions[i] == -1)
                 {
                     int rotDegrees = 0 + i * (360/roomSize);
                     hash.Add("rot", rotDegrees);
                     paddle = PhotonNetwork.Instantiate(Path.Combine("PhotonPrefabs", "Paddle"), Vector3.zero, Quaternion.Euler(new Vector3(0,0,rotDegrees)));
                     paddle.tag = "Paddle";
-                    rotPositions[i] = PhotonNetwork.LocalPlayer;
+                    rotPositions[i] = PhotonNetwork.LocalPlayer.ActorNumber;
                     break;
                 }
             }
@@ -64,10 +64,10 @@ public class GameSetupController : MonoBehaviour
         else
         {
             // Initialize the "rotPositions" array with size roomSize and set all positions to null
-            Player[] rotPositions = new Player[roomSize];
+            int[] rotPositions = new int[roomSize];
             for (int i = 0; i < rotPositions.Length; i++)
             {
-                rotPositions[i] = null;
+                rotPositions[i] = -1;
             }
 
             hash.Add("rot", 0);
@@ -75,7 +75,7 @@ public class GameSetupController : MonoBehaviour
             paddle.tag = "Paddle";
 
             // Set the first position to the newly created player
-            rotPositions[0] = PhotonNetwork.LocalPlayer;
+            rotPositions[0] = PhotonNetwork.LocalPlayer.ActorNumber;
 
             // Add the new "rotPositions" array to the room properties
             Hashtable rotHash = new Hashtable();
