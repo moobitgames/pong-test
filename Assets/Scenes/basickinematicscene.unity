@@ -2122,7 +2122,7 @@ GameObject:
   - component: {fileID: 2028900643}
   - component: {fileID: 2028900642}
   m_Layer: 0
-  m_Name: EndOneNotificationZone
+  m_Name: EndzoneOneNotificationZone
   m_TagString: Rot0
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
