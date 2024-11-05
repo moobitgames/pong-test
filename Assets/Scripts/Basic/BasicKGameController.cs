@@ -45,7 +45,8 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
         private GameObject _otherPlayerWallPanel;
         private GameObject _myWallPanel;
 
-    private void Start(){
+    private void Start()
+    {
         // set local Photon Player
         _localPlayer = PhotonNetwork.LocalPlayer; 
         // set player name
@@ -68,21 +69,26 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
         }
 
         // TODO: make player agnostic
-        if (PhotonNetwork.PlayerListOthers.Length>0){
-            _otherPlayerWallPanel = _endZoneWallPanelOne;
-            _myWallPanel = _endZoneWallPanelTwo;
+        if (PhotonNetwork.PlayerListOthers.Length>0)
+        {
+            _otherPlayerWallPanel = GameObject.FindWithTag("EndZoneWallPanel0");
+            _myWallPanel = GameObject.FindWithTag("EndZoneWallPanel180");
         } else 
         {
-            _otherPlayerWallPanel = _endZoneWallPanelTwo;
-            _myWallPanel = _endZoneWallPanelOne;
+            _otherPlayerWallPanel = GameObject.FindWithTag("EndZoneWallPanel180");
+            _myWallPanel = GameObject.FindWithTag("EndZoneWallPanel0");
         }
 
         // Reset game
+        SetOtherPlayerWallPanel(false);
+        Debug.Log("aaa"+_localPlayer.CustomProperties.ToString());
         ResetGame();
     }
 
     // Might not be needed
-    public void SetTheirName(){
+
+    public void SetTheirName()
+    {
         _theirName.text = _otherPlayer.NickName;
     }
 
@@ -93,12 +99,14 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
         base.OnEnable();
     }
 
-    public override void OnPlayerEnteredRoom(Player newPlayer){
+    public override void OnPlayerEnteredRoom(Player newPlayer)
+    {
         _otherPlayer = newPlayer;
         SetTheirName();
     }
 
-    public override void OnJoinedRoom(){
+    public override void OnJoinedRoom()
+    {
         if (PhotonNetwork.PlayerListOthers.Length>0)
         {
             _otherPlayer = PhotonNetwork.PlayerListOthers[0];
@@ -114,7 +122,8 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
         SetPlayerScore(_localPlayer,0);
     }
 
-    public override void OnPlayerLeftRoom(Player otherPlayer){
+    public override void OnPlayerLeftRoom(Player otherPlayer)
+    {
         // reset game
         if (!_isGameOver)
         {
@@ -129,7 +138,8 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
         }
     }
 
-    void ResetGame(){
+    void ResetGame()
+    {
         // Game start: 
         // 1. Clear all ui panels
         // 2. Clear player score, ball and paddle positions, lastKnownPositions
@@ -158,18 +168,23 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
         _logPanel.LogValue("_isTurnToServe", _isTurnToServe.ToString());
     }
 
-    public void SetIsRoundInProgress(bool status){
+
+    public void SetIsRoundInProgress(bool status)
+    {
         _isRoundInProgress = status;
         _logPanel.LogValue("_isRoundInProgress", _isRoundInProgress.ToString());
     }
 
-    public void SetIsMasterClient(){
+
+    public void SetIsMasterClient()
+    {
         _isMasterClient = PhotonNetwork.IsMasterClient;
         _logPanel.LogValue("_isMasterClient", _isMasterClient.ToString());
     }
 
 
-    int PingCheck(Player player){
+    int PingCheck(Player player)
+    {
         Hashtable properties = new Hashtable();
         int ping = PhotonNetwork.GetPing();
         if (properties.ContainsKey("Ping"))
@@ -229,7 +244,8 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
     // * DOC:
     // * This function is called to notify other players that a player has pressed space
     [PunRPC]
-    private void RPC_SpacePressed(){
+    private void RPC_SpacePressed()
+    {
         StartRound();
     }
 
@@ -249,8 +265,15 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
     }
 
     [PunRPC]
-    private void RPC_BallTraveledBehindOtherPaddle(){
+    private void RPC_BallTraveledBehindOtherPaddle()
+    {
         SetOtherPlayerWallPanel(false);
+    }
+
+    [PunRPC]
+    private void RPC_OtherPlayerReset(){
+        SetMyWallPanel(false);
+        SetOtherPlayerWallPanel(true);
     }
 
     public void SetMyWallPanel(bool status)
@@ -265,7 +288,25 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
         _logPanel.LogValue("Other wall panel", status.ToString());
     }
 
+    public void HandleBallEnterNotZone(string rotValue)
+    {
+        switch(rotValue)
+        {
+            case "NotRot0":
+                if ((int) _localPlayer.CustomProperties["rot"] == 0)
+                {
+                    NotifyOtherPlayerBallMissed();
+                }
+            break;
 
+            case "NotRot180":
+                if ((int)_localPlayer.CustomProperties["rot"] == 180)
+                {
+                    NotifyOtherPlayerBallMissed();
+                }
+            break;
+        }
+    }
 
     public void HandleBallEnterEndZone(string rotValue)
     {
@@ -274,10 +315,9 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
             case "Rot0":
                 if ((int) _localPlayer.CustomProperties["rot"] == 180)
                 {
-                    Debug.Log("goodbye");
                     GivePointToPlayer(_localPlayer);
-                }else{
-                    Debug.Log("Hello");
+                }else
+                {
                     GivePointToPlayer(_otherPlayer);
                 }
                 break;
@@ -285,7 +325,8 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
                 if ((int) _localPlayer.CustomProperties["rot"] ==  0)
                 {
                     GivePointToPlayer(_localPlayer);
-                }else{
+                }else
+                {
                     GivePointToPlayer(_otherPlayer);
                 }
                 break;
@@ -351,8 +392,9 @@ public class BasicKGameController : MonoBehaviourPunCallbacks {
     public void ResetRound()
     {
         ResetBall();
-        // SetOtherPlayerWallPanel(true);
-        // SetMyWallPanel(true);
+        SetOtherPlayerWallPanel(true);
+        SetMyWallPanel(false);
+        this.photonView.RPC("RPC_OtherPlayerReset", _otherPlayer);
     }
 
     public void ResetBall()

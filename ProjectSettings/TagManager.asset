@@ -15,6 +15,10 @@ TagManager:
   - Bullet
   - Rot0
   - Rot180
+  - NotRot0
+  - NotRot180
+  - EndZoneWallPanel0
+  - EndZoneWallPanel180
   layers:
   - Default
   - TransparentFX
